@@ -17,16 +17,16 @@ function ScrollToTop() {
 
 export default function App() {
   return (
-    <ModalProvider>
-      <Router>
-        <ScrollToTop />
+    <Router>
+      <ScrollToTop />
+      <ModalProvider>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<Home />} />
         </Routes>
-      </Router>
-    </ModalProvider>
+      </ModalProvider>
+    </Router>
   );
 }

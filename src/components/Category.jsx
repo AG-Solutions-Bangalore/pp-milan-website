@@ -53,7 +53,11 @@ export default function Category() {
       }${filters.profession ? `, Profession: ${filters.profession}` : ''}${
         filters.education ? `, Education: ${filters.education}` : ''
       }${filters.age ? `, Age: ${filters.age}` : ''}. You can view the full candidate directory or register your profile now.`,
-      buttonText: "Register / View Matches"
+      buttonText: "Register / View Matches",
+      actionPath: "/registration",
+      onAction: () => {
+        navigate('/registration');
+      }
     });
   };
 

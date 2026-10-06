@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Menu, X, ArrowRight } from 'lucide-react';
+import { Search, Menu, X, ArrowRight, ArrowLeft } from 'lucide-react';
 import logoImg from '../assets/PPMilan_logo.png';
 
 export default function Navbar({ onReplayWelcome }) {
@@ -13,10 +13,16 @@ export default function Navbar({ onReplayWelcome }) {
   const navigate = useNavigate();
 
   const isHomePage = location.pathname === '/';
+  const isRegistrationPage = location.pathname === '/registration';
 
   useEffect(() => {
     if (location.pathname === '/contact') {
       setActiveSection('contact');
+      return;
+    }
+
+    if (location.pathname === '/registration') {
+      setActiveSection('');
       return;
     }
 
@@ -153,24 +159,44 @@ export default function Navbar({ onReplayWelcome }) {
               )}
             </div> */}
 
-            {/* Submit Bio-Data Crimson Pill */}
-            <Link
-              to="/registration"
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#9F1239] hover:bg-[#881337] rounded-full shadow-md shadow-[#9F1239]/20 hover:shadow-lg hover:shadow-[#9F1239]/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 group"
-            >
-              <span>Submit Bio-Data</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            {/* Submit Bio-Data / Back Button */}
+            {isRegistrationPage ? (
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white -text bg-maroon-900 hover:bg-[#881337] rounded-full shadow-md shadow-[#9F1239]/20 hover:shadow-lg hover:shadow-[#9F1239]/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 group"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+                <span>Back to Home</span>
+              </Link>
+            ) : (
+              <Link
+                to="/registration"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#9F1239] hover:bg-[#881337] rounded-full shadow-md shadow-[#9F1239]/20 hover:shadow-lg hover:shadow-[#9F1239]/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 group"
+              >
+                <span>Submit Bio-Data</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            )}
           </div> 
 
           {/* Mobile menu toggle */}
           <div className="flex lg:hidden items-center gap-1.5 sm:gap-2 shrink-0">
-            <Link
-              to="/registration"
-              className="text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full bg-[#9F1239] hover:bg-[#881337] text-white whitespace-nowrap shrink-0 transition-colors shadow-xs"
-            >
-              Submit Bio-Data
-            </Link>
+            {isRegistrationPage ? (
+              <Link
+                to="/"
+                className="text-[11px] sm:text-xs font-semibold px-3 py-1.5 rounded-full bg-[#9F1239] hover:bg-[#881337] text-white whitespace-nowrap shrink-0 transition-colors shadow-xs inline-flex items-center gap-1.5"
+              >
+                <ArrowLeft className="w-3 h-3" />
+                <span>Back</span>
+              </Link>
+            ) : (
+              <Link
+                to="/registration"
+                className="text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full bg-[#9F1239] hover:bg-[#881337] text-white whitespace-nowrap shrink-0 transition-colors shadow-xs"
+              >
+                Submit Bio-Data
+              </Link>
+            )}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-1.5 sm:p-2 rounded-lg text-[#4A3E3E] hover:bg-[#F4ECE1] transition-colors focus:outline-none shrink-0"
@@ -199,14 +225,25 @@ export default function Navbar({ onReplayWelcome }) {
             ))}
 
             <div className="pt-3">
-              <Link
-                to="/registration"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-3 text-center text-sm font-semibold text-white bg-[#9F1239] hover:bg-[#881337] rounded-full shadow-md flex items-center justify-center gap-2"
-              >
-                <span>Submit Bio-Data</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              {isRegistrationPage ? (
+                <Link
+                  to="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3 text-center text-sm font-semibold text-white bg-[#9F1239] hover:bg-[#881337] rounded-full shadow-md flex items-center justify-center gap-2"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Back to Home</span>
+                </Link>
+              ) : (
+                <Link
+                  to="/registration"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3 text-center text-sm font-semibold text-white bg-[#9F1239] hover:bg-[#881337] rounded-full shadow-md flex items-center justify-center gap-2"
+                >
+                  <span>Submit Bio-Data</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              )}
             </div>
           </nav>
         </div>
