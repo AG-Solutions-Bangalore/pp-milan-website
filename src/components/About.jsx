@@ -49,7 +49,7 @@ export default function About() {
             </p>
 
             {/* CTA Button */}
-            <div className="pt-1">
+            {/* <div className="pt-1">
               <Link
                 to="/registration"
                 className="inline-flex items-center gap-2 px-6 py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#9F1239] hover:bg-[#881337] rounded-full shadow-md shadow-[#9F1239]/20 hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-300 group"
@@ -57,7 +57,7 @@ export default function About() {
                 <span>Know More About Us</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
-            </div>
+            </div> */}
 
             {/* 3 Stat Badges Cards Row Below Button */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 w-full">

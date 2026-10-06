@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -15,28 +16,52 @@ import {
 const ModalContext = createContext(null);
 
 export function ModalProvider({ children }) {
+  const navigate = useNavigate();
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: '',
     tag: '',
     content: '',
     iconType: 'info',
-    buttonText: 'Got it'
+    buttonText: 'Got it',
+    actionPath: null,
+    onAction: null
   });
 
-  const openModal = ({ title, tag, content, iconType = 'info', buttonText = 'Got it' }) => {
+  const openModal = ({ 
+    title, 
+    tag, 
+    content, 
+    iconType = 'info', 
+    buttonText = 'Got it',
+    actionPath = null,
+    onAction = null
+  }) => {
     setModalState({
       isOpen: true,
       title,
       tag,
       content,
       iconType,
-      buttonText
+      buttonText,
+      actionPath,
+      onAction
     });
   };
 
   const closeModal = () => {
     setModalState((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const handleActionClick = () => {
+    const { actionPath, onAction } = modalState;
+    closeModal();
+    if (typeof onAction === 'function') {
+      onAction();
+    }
+    if (actionPath) {
+      navigate(actionPath);
+    }
   };
 
   // Close on Escape key
@@ -157,7 +182,7 @@ export function ModalProvider({ children }) {
 
               {/* Action Button */}
               <button
-                onClick={closeModal}
+                onClick={handleActionClick}
                 className="w-full sm:w-auto px-8 py-2.5 rounded-full bg-gradient-to-r from-[#9F1239] via-[#BE123C] to-[#9F1239] hover:from-[#881337] hover:to-[#BE123C] text-white text-xs sm:text-sm font-semibold shadow-md shadow-[#9F1239]/25 hover:shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
                 {modalState.buttonText}

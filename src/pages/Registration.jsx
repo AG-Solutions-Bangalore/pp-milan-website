@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -18,7 +18,11 @@ import {
   Sparkles,
   AlertCircle,
   Camera,
-  Award
+  Award,
+  Search,
+  ChevronDown,
+  Check,
+  X
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -67,60 +71,60 @@ const FALLBACK_EDUCATIONS = [
 
 const FALLBACK_GOTRAS = {
   1: [
-    { gotra_name: 'Bharadwaj' },
-    { gotra_name: 'Vashishtha' },
-    { gotra_name: 'Kaushik' },
-    { gotra_name: 'Gautam' },
-    { gotra_name: 'Atri' },
-    { gotra_name: 'Kashyap' },
-    { gotra_name: 'Agastya' },
-    { gotra_name: 'Bhrigu' },
-    { gotra_name: 'Vishwamitra' },
-    { gotra_name: 'Jamadagni' },
-    { gotra_name: 'Parashar' },
-    { gotra_name: 'Shandilya' },
-    { gotra_name: 'Dhananjaya' },
-    { gotra_name: 'Mudgal' },
-    { gotra_name: 'Upamanyu' },
-    { gotra_name: 'Srivatsa' },
-    { gotra_name: 'Vatsa' },
-    { gotra_name: 'Mandavya' },
-    { gotra_name: 'Chyavana' },
-    { gotra_name: 'Sankrithi' },
-    { gotra_name: 'Dhar' },
-    { gotra_name: 'Kaul' },
-    { gotra_name: 'Bhan' },
-    { gotra_name: 'Razdan' },
-    { gotra_name: 'Raina' },
-    { gotra_name: 'Kak' },
-    { gotra_name: 'Mattoo' },
-    { gotra_name: 'Sharga' },
-    { gotra_name: 'Bamzai' },
-    { gotra_name: 'Bodinayana' },
-    { gotra_name: 'Vadula' },
-    { gotra_name: 'Gargya' },
-    { gotra_name: 'Kutsa' },
-    { gotra_name: 'Maudgalya' },
-    { gotra_name: 'Taittiriya' },
-    { gotra_name: 'Bihaut' },
-    { gotra_name: 'Azodiya' },
-    { gotra_name: 'Kanojia' },
-    { gotra_name: 'Maghiya' }
+    { id: 1, gotra_name: 'Bharadwaj' },
+    { id: 2, gotra_name: 'Vashishtha' },
+    { id: 3, gotra_name: 'Kaushik' },
+    { id: 4, gotra_name: 'Gautam' },
+    { id: 5, gotra_name: 'Atri' },
+    { id: 6, gotra_name: 'Kashyap' },
+    { id: 7, gotra_name: 'Agastya' },
+    { id: 8, gotra_name: 'Bhrigu' },
+    { id: 9, gotra_name: 'Vishwamitra' },
+    { id: 10, gotra_name: 'Jamadagni' },
+    { id: 11, gotra_name: 'Parashar' },
+    { id: 12, gotra_name: 'Shandilya' },
+    { id: 13, gotra_name: 'Dhananjaya' },
+    { id: 14, gotra_name: 'Mudgal' },
+    { id: 15, gotra_name: 'Upamanyu' },
+    { id: 16, gotra_name: 'Srivatsa' },
+    { id: 17, gotra_name: 'Vatsa' },
+    { id: 18, gotra_name: 'Mandavya' },
+    { id: 19, gotra_name: 'Chyavana' },
+    { id: 20, gotra_name: 'Sankrithi' },
+    { id: 21, gotra_name: 'Dhar' },
+    { id: 22, gotra_name: 'Kaul' },
+    { id: 23, gotra_name: 'Bhan' },
+    { id: 24, gotra_name: 'Razdan' },
+    { id: 25, gotra_name: 'Raina' },
+    { id: 26, gotra_name: 'Kak' },
+    { id: 27, gotra_name: 'Mattoo' },
+    { id: 28, gotra_name: 'Sharga' },
+    { id: 29, gotra_name: 'Bamzai' },
+    { id: 30, gotra_name: 'Bodinayana' },
+    { id: 31, gotra_name: 'Vadula' },
+    { id: 32, gotra_name: 'Gargya' },
+    { id: 33, gotra_name: 'Kutsa' },
+    { id: 34, gotra_name: 'Maudgalya' },
+    { id: 35, gotra_name: 'Taittiriya' },
+    { id: 36, gotra_name: 'Bihaut' },
+    { id: 37, gotra_name: 'Azodiya' },
+    { id: 38, gotra_name: 'Kanojia' },
+    { id: 39, gotra_name: 'Maghiya' }
   ],
   2: [
-    { gotra_name: 'Gautam' },
-    { gotra_name: 'Atri' },
-    { gotra_name: 'Upmanyu' },
-    { gotra_name: 'Harita' },
-    { gotra_name: 'Vashishta' },
-    { gotra_name: 'Kashyap' },
-    { gotra_name: 'Vishwakarma' },
-    { gotra_name: 'Bharadwaj' },
-    { gotra_name: 'Vishwamitra' },
-    { gotra_name: 'Shiva' },
-    { gotra_name: 'Jamadagni' },
-    { gotra_name: 'Agastya' },
-    { gotra_name: 'Angeeras' }
+    { id: 1, gotra_name: 'Gautam' },
+    { id: 2, gotra_name: 'Atri' },
+    { id: 3, gotra_name: 'Upmanyu' },
+    { id: 4, gotra_name: 'Harita' },
+    { id: 5, gotra_name: 'Vashishta' },
+    { id: 6, gotra_name: 'Kashyap' },
+    { id: 7, gotra_name: 'Vishwakarma' },
+    { id: 8, gotra_name: 'Bharadwaj' },
+    { id: 9, gotra_name: 'Vishwamitra' },
+    { id: 10, gotra_name: 'Shiva' },
+    { id: 11, gotra_name: 'Jamadagni' },
+    { id: 12, gotra_name: 'Agastya' },
+    { id: 13, gotra_name: 'Angeeras' }
   ]
 };
 
@@ -131,12 +135,32 @@ export default function Registration() {
   const [submitting, setSubmitting] = useState(false);
   const [refId, setRefId] = useState('');
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
 
   // Dynamic API state
   const [communities, setCommunities] = useState(FALLBACK_COMMUNITIES);
   const [educations, setEducations] = useState(FALLBACK_EDUCATIONS);
   const [gotras, setGotras] = useState([]);
   const [loadingGotras, setLoadingGotras] = useState(false);
+
+  // Searchable Gotra state
+  const [gotraSearch, setGotraSearch] = useState('');
+  const [isGotraOpen, setIsGotraOpen] = useState(false);
+  const gotraDropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (gotraDropdownRef.current && !gotraDropdownRef.current.contains(event.target)) {
+        setIsGotraOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const filteredGotras = gotras.filter((g) =>
+    (g.gotra_name || '').toLowerCase().includes(gotraSearch.toLowerCase().trim())
+  );
 
   // Form State with exact field names matching the image
   const [formData, setFormData] = useState({
@@ -154,7 +178,9 @@ export default function Registration() {
     // Step 2: Community, Gotra & Education
     community_id: '',
     community_name: '',
+    gotra_id: '',
     gotra: '',
+    education_id: '',
     education: '',
     occupation: '',
     workingCity: '',
@@ -229,19 +255,29 @@ export default function Registration() {
         return res.json();
       })
       .then((resData) => {
-        if (resData && Array.isArray(resData.data)) {
+        const fallbackList = FALLBACK_GOTRAS[formData.community_id] || [];
+        if (resData && Array.isArray(resData.data) && resData.data.length > 0) {
           const unique = [];
           const seen = new Set();
-          resData.data.forEach((item) => {
-            const name = item.gotra_name || item.name;
+          resData.data.forEach((item, idx) => {
+            const name = typeof item === 'string' ? item : (item.gotra_name || item.name);
+            const matchedFallback = fallbackList.find(
+              (f) => f.gotra_name.toLowerCase() === (name || '').toLowerCase()
+            );
+            const id = (item && item.id !== undefined)
+              ? item.id
+              : (item && item.gotra_id !== undefined
+                ? item.gotra_id
+                : (matchedFallback ? matchedFallback.id : idx + 1));
+
             if (name && !seen.has(name.toLowerCase())) {
               seen.add(name.toLowerCase());
-              unique.push(item);
+              unique.push({ id: String(id), gotra_name: name });
             }
           });
           setGotras(unique);
         } else {
-          setGotras(FALLBACK_GOTRAS[formData.community_id] || []);
+          setGotras(fallbackList);
         }
       })
       .catch((err) => {
@@ -262,8 +298,37 @@ export default function Registration() {
         ...prev,
         community_id: value,
         community_name: selected ? selected.community_name : '',
+        gotra_id: '',
         gotra: ''
       }));
+    } else if (name === 'education_id') {
+      const selected = educations.find((ed) => String(ed.id) === String(value));
+      setFormData((prev) => ({
+        ...prev,
+        education_id: value,
+        education: selected ? (selected.education_name || selected.name) : value
+      }));
+      if (errors.education_id || errors.education) {
+        setErrors((prev) => ({ ...prev, education_id: '', education: '' }));
+      }
+    } else if (name === 'gotra_id') {
+      const selected = gotras.find((g) => String(g.id) === String(value));
+      setFormData((prev) => ({
+        ...prev,
+        gotra_id: value,
+        gotra: selected ? selected.gotra_name : (value === 'Other' ? 'Other' : value)
+      }));
+      if (errors.gotra_id || errors.gotra) {
+        setErrors((prev) => ({ ...prev, gotra_id: '', gotra: '' }));
+      }
+    } else if (name === 'fullName' || name === 'fatherName' || name === 'referenceName') {
+      // Disallow numbers: allow only letters, spaces, dots, apostrophes, and hyphens
+      const lettersOnly = value.replace(/[^a-zA-Z\s.'-]/g, '');
+      setFormData((prev) => ({ ...prev, [name]: lettersOnly }));
+    } else if (name === 'mainContactNo' || name === 'whatsappNo' || name === 'referenceMobile') {
+      // Allow only numbers and restrict to max 10 digits
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 10);
+      setFormData((prev) => ({ ...prev, [name]: digitsOnly }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -271,11 +336,71 @@ export default function Registration() {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
+    if (submitError) {
+      setSubmitError('');
+    }
   };
+
+  // Validation utility helpers
+  const cleanPhone = (phone) => {
+    if (!phone) return '';
+    let digits = String(phone).replace(/\D/g, '');
+    if (digits.length === 11 && digits.startsWith('0')) {
+      digits = digits.slice(1);
+    } else if (digits.length === 12 && digits.startsWith('91')) {
+      digits = digits.slice(2);
+    }
+    return digits;
+  };
+
+  const validateDob = (dobStr) => {
+    if (!dobStr) return 'Date of birth is required';
+    const dobDate = new Date(dobStr);
+    if (isNaN(dobDate.getTime())) return 'Please enter a valid date of birth';
+
+    const today = new Date();
+    if (dobDate > today) return 'Date of birth cannot be in the future';
+
+    let age = today.getFullYear() - dobDate.getFullYear();
+    const monthDiff = today.getMonth() - dobDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
+      age--;
+    }
+
+    if (age < 18) {
+      return 'Candidate must be at least 18 years of age';
+    }
+    if (age > 85) {
+      return 'Please enter a valid date of birth';
+    }
+    return null;
+  };
+
+  const maxDobDate = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 18);
+    return d.toISOString().split('T')[0];
+  })();
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+      if (!validTypes.includes(file.type)) {
+        setErrors((prev) => ({
+          ...prev,
+          photoFile: 'Please upload a valid image file (JPG, PNG, or WEBP)'
+        }));
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors((prev) => ({
+          ...prev,
+          photoFile: 'Photo size should not exceed 5MB'
+        }));
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
         photoFile: file,
@@ -290,11 +415,31 @@ export default function Registration() {
   const handleBioDataUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const allowedExtensions = ['.pdf', '.doc', '.docx'];
+      const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+      if (!allowedExtensions.includes(fileExt)) {
+        setErrors((prev) => ({
+          ...prev,
+          bioDataFile: 'Bio-data must be a PDF or Word document (.pdf, .doc, .docx)'
+        }));
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        setErrors((prev) => ({
+          ...prev,
+          bioDataFile: 'Bio-data document size should not exceed 10MB'
+        }));
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
         bioDataFile: file,
         bioDataName: file.name
       }));
+      if (errors.bioDataFile) {
+        setErrors((prev) => ({ ...prev, bioDataFile: '' }));
+      }
     }
   };
 
@@ -302,30 +447,151 @@ export default function Registration() {
     const newErrors = {};
 
     if (step === 1) {
-      if (!formData.fullName.trim()) newErrors.fullName = 'Full Name is required';
-      if (!formData.gender) newErrors.gender = 'Gender is required';
-      if (!formData.dob) newErrors.dob = 'Date of birth is required';
-      if (!formData.birthTime) newErrors.birthTime = 'Time of birth is required';
-      if (!formData.email.trim()) {
-        newErrors.email = 'Email address is required';
-      } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-        newErrors.email = 'Please enter a valid email address';
+      // Full Name
+      const name = formData.fullName.trim();
+      if (!name) {
+        newErrors.fullName = 'Full Name is required';
+      } else if (name.length < 2) {
+        newErrors.fullName = 'Full Name must be at least 2 characters';
+      } else if (!/^[a-zA-Z\s.'-]+$/.test(name)) {
+        newErrors.fullName = 'Full Name should only contain letters and spaces (no numbers)';
       }
-      if (!formData.mainContactNo.trim()) newErrors.mainContactNo = 'Main Contact No is required';
+
+      // Gender
+      if (!formData.gender) {
+        newErrors.gender = 'Please select candidate gender';
+      }
+
+      // Date of Birth
+      const dobError = validateDob(formData.dob);
+      if (dobError) {
+        newErrors.dob = dobError;
+      }
+
+      // Time of Birth
+      if (!formData.birthTime) {
+        newErrors.birthTime = 'Time of birth is required';
+      }
+
+      // Email
+      const email = formData.email.trim();
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!email) {
+        newErrors.email = 'Email address is required';
+      } else if (!emailRegex.test(email)) {
+        newErrors.email = 'Please enter a valid email address (e.g. name@example.com)';
+      }
+
+      // Main Contact Number
+      const phoneDigits = cleanPhone(formData.mainContactNo);
+      if (!formData.mainContactNo.trim()) {
+        newErrors.mainContactNo = 'Main Contact Number is required';
+      } else if (phoneDigits.length !== 10 || !/^[6-9]\d{9}$/.test(phoneDigits)) {
+        newErrors.mainContactNo = 'Please enter a valid 10-digit mobile number';
+      }
+
+      // WhatsApp Number (Optional, but if filled must be 10 digits)
+      if (formData.whatsappNo && formData.whatsappNo.trim()) {
+        const waDigits = cleanPhone(formData.whatsappNo);
+        if (waDigits.length !== 10 || !/^[6-9]\d{9}$/.test(waDigits)) {
+          newErrors.whatsappNo = 'Please enter a valid 10-digit WhatsApp number';
+        }
+      }
     } else if (step === 2) {
-      if (!formData.community_id) newErrors.community_id = 'My Community is required';
-      if (!formData.gotra) newErrors.gotra = 'Gotra is required';
-      if (!formData.education) newErrors.education = 'Education is required';
-      if (!formData.occupation.trim()) newErrors.occupation = 'Occupation is required';
-      if (!formData.workingCity.trim()) newErrors.workingCity = 'Working City is required';
-      if (!formData.placeOfBirth.trim()) newErrors.placeOfBirth = 'Place of Birth is required';
-      if (!formData.villageCityState.trim()) newErrors.villageCityState = 'Village, City / State is required';
+      // Community
+      if (!formData.community_id) {
+        newErrors.community_id = 'Please select community';
+      }
+
+      // Gotra
+      if (!formData.gotra_id && !formData.gotra) {
+        newErrors.gotra_id = 'Please select gotra';
+      }
+
+      // Education
+      if (!formData.education_id && !formData.education) {
+        newErrors.education_id = 'Please select education';
+      }
+
+      // Occupation
+      const occ = formData.occupation.trim();
+      if (!occ) {
+        newErrors.occupation = 'Occupation is required';
+      } else if (occ.length < 2) {
+        newErrors.occupation = 'Occupation must be at least 2 characters';
+      }
+
+      // Working City
+      const city = formData.workingCity.trim();
+      if (!city) {
+        newErrors.workingCity = 'Working City is required';
+      } else if (city.length < 2) {
+        newErrors.workingCity = 'Working City must be at least 2 characters';
+      }
+
+      // Place of Birth
+      const pob = formData.placeOfBirth.trim();
+      if (!pob) {
+        newErrors.placeOfBirth = 'Place of Birth is required';
+      } else if (pob.length < 2) {
+        newErrors.placeOfBirth = 'Place of Birth must be at least 2 characters';
+      }
+
+      // Village, City / State
+      const vcs = formData.villageCityState.trim();
+      if (!vcs) {
+        newErrors.villageCityState = 'Village, City / State is required';
+      } else if (vcs.length < 2) {
+        newErrors.villageCityState = 'Village, City / State must be at least 2 characters';
+      }
     } else if (step === 3) {
-      if (!formData.fatherName.trim()) newErrors.fatherName = 'Father Name is required';
-      if (!formData.marriedBefore) newErrors.marriedBefore = 'Please select marital status';
-      if (!formData.disability) newErrors.disability = 'Please select disability option';
-      if (!formData.permanentAddress.trim()) newErrors.permanentAddress = 'Permanent Address is required';
+      // Father Name
+      const fName = formData.fatherName.trim();
+      if (!fName) {
+        newErrors.fatherName = 'Father Name is required';
+      } else if (fName.length < 2) {
+        newErrors.fatherName = 'Father Name must be at least 2 characters';
+      } else if (!/^[a-zA-Z\s.'-]+$/.test(fName)) {
+        newErrors.fatherName = "Father's name should only contain letters and spaces (no numbers)";
+      }
+
+      // Marital Status
+      if (!formData.marriedBefore) {
+        newErrors.marriedBefore = 'Please select marital status';
+      }
+
+      // Reference Name (Optional)
+      if (formData.referenceName && formData.referenceName.trim()) {
+        const refName = formData.referenceName.trim();
+        if (refName.length < 2) {
+          newErrors.referenceName = 'Reference name must be at least 2 characters';
+        } else if (!/^[a-zA-Z\s.'-]+$/.test(refName)) {
+          newErrors.referenceName = 'Reference name should only contain letters and spaces (no numbers)';
+        }
+      }
+
+      // Reference Mobile (Optional)
+      if (formData.referenceMobile && formData.referenceMobile.trim()) {
+        const refPhoneDigits = cleanPhone(formData.referenceMobile);
+        if (refPhoneDigits.length !== 10 || !/^[6-9]\d{9}$/.test(refPhoneDigits)) {
+          newErrors.referenceMobile = 'Please enter a valid 10-digit reference mobile number';
+        }
+      }
+
+      // Disability
+      if (!formData.disability) {
+        newErrors.disability = 'Please select disability option';
+      }
+
+      // Permanent Address
+      const addr = formData.permanentAddress.trim();
+      if (!addr) {
+        newErrors.permanentAddress = 'Permanent Address is required';
+      } else if (addr.length < 8) {
+        newErrors.permanentAddress = 'Please enter complete address (minimum 8 characters)';
+      }
     } else if (step === 4) {
+      // Photo
       if (!formData.photoFile && !formData.photoPreview) {
         newErrors.photoFile = 'Candidate photo is required';
       }
@@ -335,67 +601,133 @@ export default function Registration() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const validateAllSteps = () => {
+    for (let s = 1; s <= 4; s++) {
+      if (!validateStep(s)) {
+        setCurrentStep(s);
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+        return false;
+      }
+    }
+    return true;
+  };
+
   const nextStep = () => {
     if (validateStep(currentStep)) {
       setCurrentStep((prev) => Math.min(prev + 1, 4));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 120, behavior: 'smooth' });
     }
   };
 
   const prevStep = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 120, behavior: 'smooth' });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateStep(currentStep)) return;
+    setSubmitError('');
+    if (!validateAllSteps()) return;
 
     setSubmitting(true);
     const generatedId = 'PPM-' + Math.floor(100000 + Math.random() * 900000);
     setRefId(generatedId);
 
     try {
+      const cleanMainMobile = cleanPhone(formData.mainContactNo);
+      const cleanWaMobile = formData.whatsappNo ? cleanPhone(formData.whatsappNo) : cleanMainMobile;
+      const cleanRefMobile = formData.referenceMobile ? cleanPhone(formData.referenceMobile) : '';
+
       const payload = new FormData();
-      payload.append('name', formData.fullName);
-      payload.append('profile_father_full_name', formData.fatherName);
+      payload.append('name', formData.fullName.trim());
+      payload.append('profile_father_full_name', formData.fatherName.trim());
       payload.append('profile_date_of_birth', formData.dob);
       payload.append('profile_gender', formData.gender);
       payload.append('profile_time_of_birth', formData.birthTime);
-      payload.append('profile_place_of_birth', formData.placeOfBirth);
-      payload.append('email', formData.email);
-      payload.append('profile_mobile', formData.mainContactNo);
-      payload.append('profile_whatsapp', formData.whatsappNo || formData.mainContactNo);
-      payload.append('profile_main_contact_num', formData.mainContactNo);
-      payload.append('profile_comunity_name', formData.community_name || formData.community_id);
-      payload.append('profile_gotra', formData.gotra);
-      payload.append('profile_permanent_address', formData.permanentAddress);
-      payload.append('profile_working_city', formData.workingCity);
-      payload.append('profile_village_city', formData.villageCityState);
-      payload.append('profile_ref_contact_name', formData.referenceName || '');
-      payload.append('profile_ref_contact_mobile', formData.referenceMobile || '');
-      payload.append('profile_education', formData.education);
-      payload.append('profile_occupation', formData.occupation);
+      payload.append('profile_place_of_birth', formData.placeOfBirth.trim());
+      payload.append('email', formData.email.trim());
+      payload.append('profile_mobile', cleanMainMobile);
+      payload.append('profile_whatsapp', cleanWaMobile || cleanMainMobile);
+      payload.append('profile_main_contact_num', cleanMainMobile);
+
+      // Backend expects the IDs for Community, Gotra, and Education (not text values)
+      // 1. Community ID
+      const resolvedCommunityId =
+        formData.community_id ||
+        communities.find((c) => c.community_name === formData.community_name)?.id ||
+        '1';
+      payload.append('profile_comunity_name', String(resolvedCommunityId));
+      payload.append('community_id', String(resolvedCommunityId));
+
+      // 2. Gotra (Pass the name value, e.g. "Bharadwaj", not ID)
+      const resolvedGotraValue =
+        formData.gotra ||
+        gotras.find((g) => String(g.id) === String(formData.gotra_id))?.gotra_name ||
+        formData.gotra_id;
+      payload.append('profile_gotra', String(resolvedGotraValue));
+
+      payload.append('profile_permanent_address', formData.permanentAddress.trim());
+      payload.append('profile_working_city', formData.workingCity.trim());
+      payload.append('profile_village_city', formData.villageCityState.trim());
+      payload.append('profile_ref_contact_name', formData.referenceName.trim());
+      payload.append('profile_ref_contact_mobile', cleanRefMobile);
+
+      // 3. Education (Pass the name value, e.g. "BE", not ID)
+      const resolvedEducationValue =
+        formData.education ||
+        educations.find((e) => String(e.id) === String(formData.education_id))?.education_name ||
+        formData.education_id;
+      payload.append('profile_education', String(resolvedEducationValue));
+      payload.append('profile_occupation', formData.occupation.trim());
       payload.append('profile_have_married_before', formData.marriedBefore);
       payload.append('heightFeet', formData.heightFeet);
       payload.append('heightInch', formData.heightInch);
       payload.append('profile_physical_disablity', formData.disability);
-      payload.append('profile_note', formData.importantNote || '');
+      payload.append('profile_note', formData.importantNote ? formData.importantNote.trim() : '');
+
       if (formData.photoFile) {
         payload.append('profile_photo', formData.photoFile);
       }
+      if (formData.bioDataFile) {
+        payload.append('bio_data', formData.bioDataFile);
+        payload.append('biodata', formData.bioDataFile);
+      }
 
-      await fetch(`${API_BASE}/createRegistration`, {
+      const response = await fetch(`${API_BASE}/createRegistration`, {
         method: 'POST',
+        headers: {
+          Accept: 'application/json'
+        },
         body: payload
-      }).catch((err) => {
-        console.warn('Backend createRegistration notice:', err);
       });
-    } catch (err) {
-      console.warn('Registration dispatch notice:', err);
-    } finally {
-      setSubmitting(false);
+
+      const resData = await response.json().catch(() => null);
+
+      // Handle duplicate mobile or email responses (Backend returns { code: "401", message: "..." })
+      if (resData && (resData.code === '401' || resData.code === 401)) {
+        const errMsg = resData.message || 'Mobile number or Email is already registered with us.';
+        setSubmitError(errMsg);
+        if (errMsg.toLowerCase().includes('mobile')) {
+          setCurrentStep(1);
+          setErrors((prev) => ({ ...prev, mainContactNo: errMsg }));
+        } else if (errMsg.toLowerCase().includes('email')) {
+          setCurrentStep(1);
+          setErrors((prev) => ({ ...prev, email: errMsg }));
+        }
+        setSubmitting(false);
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+        return;
+      }
+
+      if (!response.ok && (!resData || (resData.code !== '200' && resData.code !== 200))) {
+        throw new Error(resData?.message || `Server error (${response.status}) while saving profile.`);
+      }
+
+      // Success
       setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
       // Trigger celebration confetti
       try {
@@ -407,38 +739,22 @@ export default function Registration() {
       } catch (err) {
         console.log(err);
       }
+    } catch (err) {
+      console.warn('Registration dispatch notice:', err);
+      setSubmitError(err.message || 'Failed to submit registration. Please check your details and try again.');
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-charcoal-800 flex flex-col justify-between">
-      {/* Registration Header Bar */}
-      <header className="bg-maroon-950 text-white border-b border-gold-500/30 py-4 px-4 sm:px-8 sticky top-0 z-50 shadow-md">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 group focus:outline-none">
-            <img
-              src={logoImg}
-              alt="PP Milan Logo"
-              className="w-11 h-11 object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
-            />
-            <div>
-              <span className="font-serif text-xl font-bold tracking-wider text-white block">PP MILAN</span>
-              <span className="text-[10px] text-cream-200 tracking-wider font-light">Pandith Prajapati Milan</span>
-            </div>
-          </Link>
-
-          <Link
-            to="/"
-            className="flex items-center gap-1.5 text-xs text-gold-300 hover:text-white font-medium transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Home</span>
-          </Link>
-        </div>
-      </header>
+      {/* Homepage Navbar */}
+      <Navbar />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8 sm:py-12">
+      <main className="flex-1 max-w-4xl w-full mx-auto px-4 pt-24 sm:pt-28 pb-10 sm:pb-16">
         {/* Title */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 text-maroon-800 font-semibold text-xs uppercase tracking-widest mb-2">
@@ -617,13 +933,23 @@ export default function Registration() {
                   >
                     4
                   </div>
-                  <span className="hidden sm:inline">Photo & Documents</span>
+                  <span className="hidden sm:inline">Candidate Photo</span>
                 </div>
               </div>
             </div>
 
             {/* Form Step Body */}
             <form onSubmit={handleSubmit} className="p-6 sm:p-10">
+              {submitError && (
+                <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                  <div className="text-left">
+                    <h4 className="font-semibold text-sm">Registration Error</h4>
+                    <p className="text-xs text-red-700 mt-0.5">{submitError}</p>
+                  </div>
+                </div>
+              )}
+
               {/* STEP 1: Personal & Contact */}
               {currentStep === 1 && (
                 <div className="space-y-6 animate-fadeIn">
@@ -681,6 +1007,7 @@ export default function Registration() {
                       <input
                         type="date"
                         name="dob"
+                        max={maxDobDate}
                         value={formData.dob}
                         onChange={handleChange}
                         className={`w-full px-4 py-3 rounded-xl border ${
@@ -711,7 +1038,7 @@ export default function Registration() {
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <label className="text-xs font-semibold text-charcoal-800">
-                          Height *
+                           Height *
                         </label>
                         <div className="flex items-center gap-6 text-[11px] text-charcoal-600 pr-3">
                           <span>Feet:</span>
@@ -772,7 +1099,10 @@ export default function Registration() {
                       <input
                         type="tel"
                         name="mainContactNo"
-                        placeholder="+91 98765 43210"
+                        maxLength={10}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        placeholder="Enter 10-digit mobile number"
                         value={formData.mainContactNo}
                         onChange={handleChange}
                         className={`w-full px-4 py-3 rounded-xl border ${
@@ -792,11 +1122,19 @@ export default function Registration() {
                       <input
                         type="tel"
                         name="whatsappNo"
-                        placeholder="+91 WhatsApp number (optional)"
+                        maxLength={10}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        placeholder="Enter 10-digit WhatsApp number (optional)"
                         value={formData.whatsappNo}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.whatsappNo ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
                       />
+                      {errors.whatsappNo && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.whatsappNo}</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -838,38 +1176,131 @@ export default function Registration() {
                       )}
                     </div>
 
-                    {/* Gotra * (Dynamic: getGotra/{community_id}) */}
-                    <div>
+                    {/* Gotra * (Dynamic: getGotra/{community_id} with Search inside) */}
+                    <div className="relative" ref={gotraDropdownRef}>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
                         Gotra *
                       </label>
-                      <select
-                        name="gotra"
-                        value={formData.gotra}
-                        onChange={handleChange}
+                      <button
+                        type="button"
                         disabled={!formData.community_id || loadingGotras}
+                        onClick={() => {
+                          if (formData.community_id && !loadingGotras) {
+                            setIsGotraOpen((prev) => !prev);
+                          }
+                        }}
                         className={`w-full px-4 py-3 rounded-xl border ${
-                          errors.gotra ? 'border-red-500' : 'border-cream-300'
-                        } text-sm focus:outline-none focus:border-gold-500 bg-white disabled:bg-cream-100 disabled:cursor-not-allowed`}
+                          errors.gotra_id || errors.gotra ? 'border-red-500' : 'border-cream-300'
+                        } text-sm text-left flex items-center justify-between bg-white focus:outline-none focus:border-gold-500 disabled:bg-cream-100 disabled:cursor-not-allowed cursor-pointer transition-all shadow-2xs`}
                       >
-                        <option value="">
+                        <span className={formData.gotra ? 'text-charcoal-900 font-medium' : 'text-charcoal-400'}>
                           {!formData.community_id
                             ? 'Select Community first'
                             : loadingGotras
                             ? 'Loading gotras...'
-                            : 'Select Gotra'}
-                        </option>
-                        {gotras.map((g, idx) => {
-                          const gotraName = g.gotra_name || g.name || g;
-                          return (
-                            <option key={`${gotraName}-${idx}`} value={gotraName}>
-                              {gotraName}
-                            </option>
-                          );
-                        })}
-                        {formData.community_id && <option value="Other">Other</option>}
-                      </select>
-                      {errors.gotra && <p className="text-[11px] text-red-600 mt-1">{errors.gotra}</p>}
+                            : formData.gotra || 'Select Gotra'}
+                        </span>
+                        <ChevronDown
+                          className={`w-4 h-4 text-charcoal-500 transition-transform duration-200 shrink-0 ${
+                            isGotraOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      {/* Dropdown Panel with Search Option Inside */}
+                      {isGotraOpen && (
+                        <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white border border-cream-300 rounded-2xl shadow-xl overflow-hidden animate-fadeIn">
+                          {/* Search Input Box */}
+                          <div className="p-2.5 border-b border-cream-100 bg-[#FAF7F2]">
+                            <div className="relative flex items-center">
+                              <Search className="w-4 h-4 text-charcoal-400 absolute left-3 pointer-events-none" />
+                              <input
+                                type="text"
+                                autoFocus
+                                placeholder="Search Gotra..."
+                                value={gotraSearch}
+                                onChange={(e) => setGotraSearch(e.target.value)}
+                                className="w-full pl-9 pr-8 py-2 rounded-lg bg-white border border-cream-300 text-xs focus:outline-none focus:border-gold-500 text-charcoal-800 placeholder-charcoal-400"
+                              />
+                              {gotraSearch && (
+                                <button
+                                  type="button"
+                                  onClick={() => setGotraSearch('')}
+                                  className="absolute right-2.5 text-charcoal-400 hover:text-charcoal-600 p-0.5 cursor-pointer"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* List of Gotras */}
+                          <div className="max-h-56 overflow-y-auto divide-y divide-cream-100/60 py-1">
+                            {filteredGotras.length > 0 ? (
+                              filteredGotras.map((g) => {
+                                const isSelected = String(formData.gotra_id) === String(g.id);
+                                return (
+                                  <button
+                                    key={`${g.id}-${g.gotra_name}`}
+                                    type="button"
+                                    onClick={() => {
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        gotra_id: String(g.id),
+                                        gotra: g.gotra_name
+                                      }));
+                                      if (errors.gotra_id || errors.gotra) {
+                                        setErrors((prev) => ({ ...prev, gotra_id: '', gotra: '' }));
+                                      }
+                                      setIsGotraOpen(false);
+                                      setGotraSearch('');
+                                    }}
+                                    className={`w-full px-4 py-2.5 text-left text-xs flex items-center justify-between transition-colors cursor-pointer ${
+                                      isSelected
+                                        ? 'bg-maroon-50 text-maroon-900 font-semibold'
+                                        : 'text-charcoal-800 hover:bg-cream-100/70'
+                                    }`}
+                                  >
+                                    <span>{g.gotra_name}</span>
+                                    {isSelected && <Check className="w-4 h-4 text-maroon-800 shrink-0" />}
+                                  </button>
+                                );
+                              })
+                            ) : (
+                              <div className="px-4 py-4 text-center text-xs text-charcoal-500">
+                                No gotra found matching "{gotraSearch}"
+                              </div>
+                            )}
+
+                            {/* Other Option */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  gotra_id: 'Other',
+                                  gotra: 'Other'
+                                }));
+                                if (errors.gotra_id || errors.gotra) {
+                                  setErrors((prev) => ({ ...prev, gotra_id: '', gotra: '' }));
+                                }
+                                setIsGotraOpen(false);
+                                setGotraSearch('');
+                              }}
+                              className={`w-full px-4 py-2.5 text-left text-xs flex items-center justify-between border-t border-cream-200 text-maroon-800 hover:bg-maroon-50/50 font-medium cursor-pointer ${
+                                formData.gotra_id === 'Other' ? 'bg-maroon-50 font-semibold' : ''
+                              }`}
+                            >
+                              <span>Other (Not listed)</span>
+                              {formData.gotra_id === 'Other' && <Check className="w-4 h-4 text-maroon-800 shrink-0" />}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {(errors.gotra_id || errors.gotra) && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.gotra_id || errors.gotra}</p>
+                      )}
                     </div>
 
                     {/* Education * (Dynamic: getEducation) */}
@@ -878,25 +1309,26 @@ export default function Registration() {
                         Education *
                       </label>
                       <select
-                        name="education"
-                        value={formData.education}
+                        name="education_id"
+                        value={formData.education_id}
                         onChange={handleChange}
                         className={`w-full px-4 py-3 rounded-xl border ${
-                          errors.education ? 'border-red-500' : 'border-cream-300'
+                          errors.education_id || errors.education ? 'border-red-500' : 'border-cream-300'
                         } text-sm focus:outline-none focus:border-gold-500 bg-white`}
                       >
                         <option value="">Select Education</option>
                         {educations.map((edu) => {
                           const eduName = edu.education_name || edu.name || edu;
+                          const eduId = edu.id !== undefined ? edu.id : eduName;
                           return (
-                            <option key={edu.id || eduName} value={eduName}>
+                            <option key={eduId} value={eduId}>
                               {eduName}
                             </option>
                           );
                         })}
                       </select>
-                      {errors.education && (
-                        <p className="text-[11px] text-red-600 mt-1">{errors.education}</p>
+                      {(errors.education_id || errors.education) && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.education_id || errors.education}</p>
                       )}
                     </div>
 
@@ -1038,34 +1470,47 @@ export default function Registration() {
                       )}
                     </div>
 
-                    {/* Refrence Name */}
+                    {/* Reference Name */}
                     <div>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Refrence Name
+                        Reference Name
                       </label>
                       <input
                         type="text"
                         name="referenceName"
-                        placeholder="Family / Community reference name"
+                        placeholder="Family / Community reference name (optional)"
                         value={formData.referenceName}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.referenceName ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
                       />
+                      {errors.referenceName && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.referenceName}</p>
+                      )}
                     </div>
 
-                    {/* Refrence Mobile No */}
+                    {/* Reference Mobile No */}
                     <div>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Refrence Mobile No
+                        Reference Mobile No
                       </label>
                       <input
                         type="tel"
                         name="referenceMobile"
-                        placeholder="Reference mobile number"
+                        maxLength={10}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        placeholder="Enter 10-digit reference mobile (optional)"
                         value={formData.referenceMobile}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.referenceMobile ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
                       />
+                      {errors.referenceMobile && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.referenceMobile}</p>
+                      )}
                     </div>
 
                     {/* Physical Disability (if any)* */}
@@ -1134,18 +1579,18 @@ export default function Registration() {
                   <div className="flex items-center gap-2 border-b border-cream-200 pb-3">
                     <Camera className="w-5 h-5 text-maroon-800" />
                     <h3 className="font-serif text-lg font-bold text-maroon-900">
-                      Step 4: Photo & Bio-Data Upload
+                      Step 4: Candidate Photo Upload
                     </h3>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="max-w-md mx-auto">
                     {/* Photo * */}
                     <div
-                      className={`p-6 rounded-2xl border-2 border-dashed ${
+                      className={`p-8 rounded-2xl border-2 border-dashed ${
                         errors.photoFile ? 'border-red-500 bg-red-50/20' : 'border-gold-400/40 bg-cream-50'
                       } text-center space-y-4`}
                     >
-                      <div className="w-24 h-24 rounded-full mx-auto overflow-hidden bg-cream-200 border-2 border-gold-400/60 flex items-center justify-center shadow-inner">
+                      <div className="w-28 h-28 rounded-full mx-auto overflow-hidden bg-cream-200 border-2 border-gold-400/60 flex items-center justify-center shadow-inner">
                         {formData.photoPreview ? (
                           <img
                             src={formData.photoPreview}
@@ -1153,18 +1598,18 @@ export default function Registration() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <User className="w-12 h-12 text-maroon-900/40" />
+                          <User className="w-14 h-14 text-maroon-900/40" />
                         )}
                       </div>
 
                       <div>
-                        <p className="text-xs font-bold text-maroon-900">Photo *</p>
-                        <p className="text-[11px] text-charcoal-600 mt-0.5">
-                          Clear recent passport or portrait photo
+                        <p className="text-sm font-bold text-maroon-900">Candidate Photo *</p>
+                        <p className="text-xs text-charcoal-600 mt-1">
+                          Clear recent passport or portrait photo (JPG, PNG, WEBP, max 5MB)
                         </p>
                       </div>
 
-                      <label className="inline-block px-4 py-2 rounded-full bg-maroon-900 text-gold-300 text-xs font-bold hover:bg-maroon-800 cursor-pointer shadow-sm">
+                      <label className="inline-block px-6 py-2.5 rounded-full bg-maroon-900 text-gold-300 text-xs font-bold hover:bg-maroon-800 cursor-pointer shadow-sm transition-all hover:scale-105 active:scale-95">
                         <span>{formData.photoFile ? 'Change Photo' : 'Choose File'}</span>
                         <input
                           type="file"
@@ -1174,33 +1619,8 @@ export default function Registration() {
                         />
                       </label>
                       {errors.photoFile && (
-                        <p className="text-[11px] text-red-600 font-semibold">{errors.photoFile}</p>
+                        <p className="text-xs text-red-600 font-semibold">{errors.photoFile}</p>
                       )}
-                    </div>
-
-                    {/* Bio-Data Document File */}
-                    <div className="p-6 rounded-2xl border-2 border-dashed border-cream-300 bg-cream-50 text-center space-y-4 flex flex-col justify-center items-center">
-                      <div className="w-16 h-16 rounded-full bg-maroon-900/10 text-maroon-900 flex items-center justify-center">
-                        <Upload className="w-8 h-8 text-maroon-800" />
-                      </div>
-
-                      <div>
-                        <p className="text-xs font-bold text-maroon-900">Upload Bio-Data File (Optional)</p>
-                        <p className="text-[11px] text-charcoal-600 mt-0.5">PDF or DOCX document format</p>
-                        {formData.bioDataName && (
-                          <p className="text-xs font-bold text-emerald-700 mt-1">✓ File: {formData.bioDataName}</p>
-                        )}
-                      </div>
-
-                      <label className="px-4 py-2 rounded-full bg-maroon-900 text-gold-300 text-xs font-bold hover:bg-maroon-800 cursor-pointer shadow-sm">
-                        <span>{formData.bioDataName ? 'Change File' : 'Browse Bio-Data'}</span>
-                        <input
-                          type="file"
-                          accept=".pdf,.doc,.docx"
-                          onChange={handleBioDataUpload}
-                          className="hidden"
-                        />
-                      </label>
                     </div>
                   </div>
 

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   MapPin, 
   Phone, 
@@ -8,7 +8,9 @@ import {
   MessageSquare, 
   ArrowRight, 
   ChevronRight, 
-  CheckCircle2 
+  CheckCircle2,
+  AlertCircle,
+  X
 } from 'lucide-react';
 import contactBgBanner from '../assets/contact_banner_bg.jpg';
 
@@ -21,9 +23,78 @@ export default function Contact() {
     phone: '',
     message: ''
   });
+  const [errors, setErrors] = useState({});
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  const validate = () => {
+    const newErrors = {};
+
+    // Name validation
+    const trimmedName = formData.name.trim();
+    if (!trimmedName) {
+      newErrors.name = 'Full name is required';
+    } else if (!/^[a-zA-Z\s.]+$/.test(trimmedName)) {
+      newErrors.name = 'Letters only';
+    } else if (trimmedName.length < 2) {
+      newErrors.name = 'At least 2 characters required';
+    }
+
+    // Phone validation
+    const cleanedPhone = formData.phone.replace(/\D/g, '');
+    if (!cleanedPhone) {
+      newErrors.phone = 'Mobile number is required';
+    } else if (cleanedPhone.length !== 10) {
+      newErrors.phone = 'Must be exactly 10 digits';
+    } else if (!/^[6-9]\d{9}$/.test(cleanedPhone)) {
+      newErrors.phone = 'Must start with 6, 7, 8, or 9';
+    }
+
+    // Email validation
+    const trimmedEmail = formData.email.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!trimmedEmail) {
+      newErrors.email = 'Email address is required';
+    } else if (!emailRegex.test(trimmedEmail)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    // Message validation
+    const trimmedMessage = formData.message.trim();
+    if (!trimmedMessage) {
+      newErrors.message = 'Please enter your message';
+    } else if (trimmedMessage.length < 5) {
+      newErrors.message = 'Message must be at least 5 characters';
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      const firstError = Object.values(newErrors)[0];
+      setToast({
+        type: 'error',
+        title: 'Validation Error',
+        message: firstError
+      });
+      return false;
+    }
+
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) {
+      return;
+    }
     setLoading(true);
 
     try {
@@ -34,22 +105,37 @@ export default function Contact() {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          userName: formData.name,
-          userMobile: formData.phone,
-          userEmail: formData.email,
-          userMessage: formData.message
+          userName: formData.name.trim(),
+          userMobile: formData.phone.trim(),
+          userEmail: formData.email.trim(),
+          userMessage: formData.message.trim()
         })
       });
 
       const resData = await response.json().catch(() => null);
       if (response.ok || (resData && (resData.code === '200' || resData.code === 200))) {
         setSubmitted(true);
+        setToast({
+          type: 'success',
+          title: 'Success!',
+          message: 'Your message has been sent successfully. We will connect with you soon.'
+        });
       } else {
         setSubmitted(true);
+        setToast({
+          type: 'success',
+          title: 'Success!',
+          message: 'Your message has been sent successfully.'
+        });
       }
     } catch (err) {
       console.warn('Enquiry submit notice:', err);
       setSubmitted(true);
+      setToast({
+        type: 'success',
+        title: 'Success!',
+        message: 'Your message has been sent successfully.'
+      });
     } finally {
       setLoading(false);
     }
@@ -85,6 +171,67 @@ export default function Contact() {
       className="pt-20 sm:pt-24 lg:pt-28 pb-14 sm:pb-16 lg:pb-20 relative overflow-hidden select-none flex-1 flex flex-col justify-center bg-no-repeat bg-cover bg-[position:center_15%]"
       style={{ backgroundImage: `url(${contactBgBanner})` }}
     >
+      {/* ========================================================
+          TOASTER NOTIFICATION (Floating Top-Right)
+         ======================================================== */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -25, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+            className="fixed top-24 right-4 sm:right-8 z-50 max-w-sm sm:max-w-md w-[calc(100%-2rem)] pointer-events-auto"
+          >
+            <div className={`p-4 rounded-2xl shadow-2xl border backdrop-blur-md flex items-start gap-3.5 relative overflow-hidden bg-white/95 ${
+              toast.type === 'error'
+                ? 'border-rose-300 shadow-rose-950/15'
+                : 'border-emerald-300 shadow-emerald-950/15'
+            }`}>
+              {/* Left Accent Color Strip */}
+              <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${
+                toast.type === 'error' ? 'bg-[#E11D48]' : 'bg-[#10B981]'
+              }`} />
+
+              {/* Icon Circle */}
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
+                toast.type === 'error' 
+                  ? 'bg-rose-50 border border-rose-200 text-[#E11D48]' 
+                  : 'bg-emerald-50 border border-emerald-200 text-[#10B981]'
+              }`}>
+                {toast.type === 'error' ? (
+                  <AlertCircle className="w-5 h-5 stroke-[2.2]" />
+                ) : (
+                  <CheckCircle2 className="w-5 h-5 stroke-[2.2]" />
+                )}
+              </div>
+
+              {/* Message Details */}
+              <div className="flex-1 min-w-0 pr-1">
+                <h4 className={`text-xs font-bold uppercase tracking-wider mb-0.5 ${
+                  toast.type === 'error' ? 'text-[#BE123C]' : 'text-[#059669]'
+                }`}>
+                  {toast.title}
+                </h4>
+                <p className="text-xs sm:text-[13px] text-[#3D2E2E] font-medium leading-snug">
+                  {toast.message}
+                </p>
+              </div>
+
+              {/* Dismiss Button */}
+              <button
+                type="button"
+                onClick={() => setToast(null)}
+                aria-label="Close notification"
+                className="text-[#8C7E7E] hover:text-[#2D2626] p-1 rounded-lg hover:bg-black/5 transition-colors cursor-pointer shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Soft warm overlay for perfect text contrast on smaller screens */}
       <div className="absolute inset-0 bg-[#FFFDF9]/40 sm:bg-transparent pointer-events-none z-0" />
 
@@ -223,8 +370,8 @@ export default function Contact() {
           {/* ========================================================
               RIGHT COLUMN: Royal Gold-Framed Contact Form Card
              ======================================================== */}
-          <div className="lg:col-span-7 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[510px] bg-white/95 backdrop-blur-xs rounded-3xl border-2 border-[#D4AF37]/50 shadow-[0_15px_45px_rgba(212,175,55,0.12)] p-6 sm:p-7">
+          <div className="lg:col-span-7 flex justify-center lg:justify-start lg:pl-2 xl:pl-30">
+            <div className="relative w-full max-w-[430px] bg-white/95 backdrop-blur-xs rounded-3xl border-2 border-[#D4AF37]/50 shadow-[0_15px_45px_rgba(212,175,55,0.12)] px-6 sm:px-8 py-5 sm:py-6">
               
               {/* Royal Gold Filigree Tiara / Crest at Top Center */}
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 pointer-events-none select-none">
@@ -238,92 +385,161 @@ export default function Contact() {
               </div>
 
               {submitted ? (
-                <div className="py-10 text-center space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
-                    <CheckCircle2 className="w-6 h-6" />
+                <div className="py-8 text-center space-y-4">
+                  <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
+                    <CheckCircle2 className="w-7 h-7" />
                   </div>
-                  <h3 className="text-lg font-serif font-bold text-[#1E1B18]">Message Sent Successfully!</h3>
-                  <p className="text-xs text-[#5A4E4D] max-w-sm mx-auto leading-relaxed">
+                  <h3 className="text-xl font-serif font-bold text-[#1E1B18]">Message Sent Successfully!</h3>
+                  <p className="text-xs sm:text-sm text-[#5A4E4D] max-w-sm mx-auto leading-relaxed">
                     Thank you for reaching out to PP Milan. Our dedicated team will connect with you shortly.
                   </p>
                   <button
                     onClick={() => {
                       setSubmitted(false);
                       setFormData({ name: '', email: '', phone: '', message: '' });
+                      setErrors({});
                     }}
-                    className="mt-3 px-5 py-2 rounded-full bg-[#9F1239] hover:bg-[#881337] text-white text-xs font-semibold shadow-sm transition-all cursor-pointer"
+                    className="mt-3 px-6 py-2.5 rounded-full bg-[#9F1239] hover:bg-[#881337] text-white text-xs sm:text-sm font-semibold shadow-sm transition-all cursor-pointer"
                   >
                     Send Another Message
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-3.5 pt-1">
+                <form onSubmit={handleSubmit} noValidate className="space-y-2.5 sm:space-y-3 pt-1">
                   
-                  {/* Row 1: Full Name & Email Address */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Row 1: Full Name & Mobile Number */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                     {/* Full Name */}
-                    <div className="relative flex items-center">
-                      <div className="absolute left-3.5 w-6 h-6 rounded-full bg-[#FFF0F3] text-[#9F1239] flex items-center justify-center pointer-events-none">
-                        <User className="w-3.5 h-3.5" />
+                    <div className="flex flex-col">
+                      <div className="relative flex items-center">
+                        <div className={`absolute left-3.5 w-6 h-6 rounded-full ${errors.name ? 'bg-rose-100 text-rose-600' : 'bg-[#FFF0F3] text-[#9F1239]'} flex items-center justify-center pointer-events-none transition-colors`}>
+                          <User className="w-3.5 h-3.5" />
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Full Name"
+                          value={formData.name}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^a-zA-Z\s.]/g, '');
+                            setFormData((prev) => ({ ...prev, name: val }));
+                            if (errors.name) setErrors((prev) => ({ ...prev, name: '' }));
+                          }}
+                          className={`w-full pl-11 pr-3 py-2.5 rounded-xl border ${
+                            errors.name 
+                              ? 'border-rose-400 bg-rose-50/20 focus:border-rose-500 focus:ring-1 focus:ring-rose-500' 
+                              : 'border-[#E8DED8] bg-white focus:border-[#9F1239] focus:ring-1 focus:ring-[#9F1239]'
+                          } text-xs text-[#2D2626] placeholder-[#8C7E7E] focus:outline-none transition-all shadow-2xs`}
+                        />
                       </div>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Full Name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full pl-11 pr-3 py-2.5 rounded-xl border border-[#E8DED8] bg-white focus:border-[#9F1239] focus:ring-1 focus:ring-[#9F1239] text-xs text-[#2D2626] placeholder-[#8C7E7E] focus:outline-none transition-all shadow-2xs"
-                      />
+                      {errors.name && (
+                        <p className="text-[10px] sm:text-[10.5px] text-rose-500 font-medium pl-1 mt-1 leading-tight flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3 shrink-0" />
+                          <span>{errors.name}</span>
+                        </p>
+                      )}
                     </div>
 
-                    {/* Email Address */}
+                    {/* Mobile Number */}
+                    <div className="flex flex-col">
+                      <div className="relative flex items-center">
+                        <div className={`absolute left-3.5 w-6 h-6 rounded-full ${errors.phone ? 'bg-rose-100 text-rose-600' : 'bg-[#FFF0F3] text-[#9F1239]'} flex items-center justify-center pointer-events-none transition-colors`}>
+                          <Phone className="w-3.5 h-3.5" />
+                        </div>
+                        <input
+                          type="tel"
+                          inputMode="numeric"
+                          maxLength={10}
+                          placeholder="Mobile Number"
+                          value={formData.phone}
+                          onChange={(e) => {
+                            const raw = e.target.value;
+                            if (/[^\d]/.test(raw)) {
+                              setToast({
+                                type: 'error',
+                                title: 'Invalid Mobile Number',
+                                message: 'Only numbers are allowed. Letters and special characters are not permitted.'
+                              });
+                            }
+                            const val = raw.replace(/\D/g, '').slice(0, 10);
+                            setFormData((prev) => ({ ...prev, phone: val }));
+                            if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
+                          }}
+                          className={`w-full pl-11 pr-3 py-2.5 rounded-xl border ${
+                            errors.phone 
+                              ? 'border-rose-400 bg-rose-50/20 focus:border-rose-500 focus:ring-1 focus:ring-rose-500' 
+                              : 'border-[#E8DED8] bg-white focus:border-[#9F1239] focus:ring-1 focus:ring-[#9F1239]'
+                          } text-xs text-[#2D2626] placeholder-[#8C7E7E] focus:outline-none transition-all shadow-2xs`}
+                        />
+                      </div>
+                      {errors.phone && (
+                        <p className="text-[10px] sm:text-[10.5px] text-rose-500 font-medium pl-1 mt-1 leading-tight flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3 shrink-0" />
+                          <span>{errors.phone}</span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Row 2: Email Address (Full Width) */}
+                  <div className="flex flex-col">
                     <div className="relative flex items-center">
-                      <div className="absolute left-3.5 w-6 h-6 rounded-full bg-[#FFF0F3] text-[#9F1239] flex items-center justify-center pointer-events-none">
+                      <div className={`absolute left-3.5 w-6 h-6 rounded-full ${errors.email ? 'bg-rose-100 text-rose-600' : 'bg-[#FFF0F3] text-[#9F1239]'} flex items-center justify-center pointer-events-none transition-colors`}>
                         <Mail className="w-3.5 h-3.5" />
                       </div>
                       <input
                         type="email"
-                        required
                         placeholder="Email Address"
                         value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full pl-11 pr-3 py-2.5 rounded-xl border border-[#E8DED8] bg-white focus:border-[#9F1239] focus:ring-1 focus:ring-[#9F1239] text-xs text-[#2D2626] placeholder-[#8C7E7E] focus:outline-none transition-all shadow-2xs"
+                        onChange={(e) => {
+                          setFormData((prev) => ({ ...prev, email: e.target.value }));
+                          if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+                        }}
+                        className={`w-full pl-11 pr-3 py-2.5 rounded-xl border ${
+                          errors.email 
+                            ? 'border-rose-400 bg-rose-50/20 focus:border-rose-500 focus:ring-1 focus:ring-rose-500' 
+                            : 'border-[#E8DED8] bg-white focus:border-[#9F1239] focus:ring-1 focus:ring-[#9F1239]'
+                        } text-xs text-[#2D2626] placeholder-[#8C7E7E] focus:outline-none transition-all shadow-2xs`}
                       />
                     </div>
+                    {errors.email && (
+                      <p className="text-[10px] sm:text-[10.5px] text-rose-500 font-medium pl-1 mt-1 leading-tight flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3 shrink-0" />
+                        <span>{errors.email}</span>
+                      </p>
+                    )}
                   </div>
 
-                  {/* Row 2: Mobile Number */}
-                  <div className="relative flex items-center">
-                    <div className="absolute left-3.5 w-6 h-6 rounded-full bg-[#FFF0F3] text-[#9F1239] flex items-center justify-center pointer-events-none">
-                      <Phone className="w-3.5 h-3.5" />
+                  {/* Row 3: Your Message (Decreased Height) */}
+                  <div className="flex flex-col">
+                    <div className="relative flex">
+                      <div className={`absolute left-3.5 top-3 w-4 h-4 rounded-full ${errors.message ? 'bg-rose-100 text-rose-600' : 'bg-[#FFF0F3] text-[#9F1239]'} flex items-center justify-center pointer-events-none transition-colors`}>
+                        <MessageSquare className="w-3.5 h-3.5" />
+                      </div>
+                      <textarea
+                        rows={3}
+                        placeholder="Your Message"
+                        value={formData.message}
+                        onChange={(e) => {
+                          setFormData((prev) => ({ ...prev, message: e.target.value }));
+                          if (errors.message) setErrors((prev) => ({ ...prev, message: '' }));
+                        }}
+                        className={`w-full pl-11 pr-3 py-2.5 rounded-xl border ${
+                          errors.message 
+                            ? 'border-rose-400 bg-rose-50/20 focus:border-rose-500 focus:ring-1 focus:ring-rose-500' 
+                            : 'border-[#E8DED8] bg-white focus:border-[#9F1239] focus:ring-1 focus:ring-[#9F1239]'
+                        } text-xs text-[#2D2626] placeholder-[#8C7E7E] focus:outline-none transition-all shadow-2xs resize-none min-h-[75px]`}
+                      />
                     </div>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="Mobile Number"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full pl-11 pr-3 py-2.5 rounded-xl border border-[#E8DED8] bg-white focus:border-[#9F1239] focus:ring-1 focus:ring-[#9F1239] text-xs text-[#2D2626] placeholder-[#8C7E7E] focus:outline-none transition-all shadow-2xs"
-                    />
-                  </div>
-
-                  {/* Row 3: Your Message */}
-                  <div className="relative flex">
-                    <div className="absolute left-3.5 top-3 w-6 h-6 rounded-full bg-[#FFF0F3] text-[#9F1239] flex items-center justify-center pointer-events-none">
-                      <MessageSquare className="w-3.5 h-3.5" />
-                    </div>
-                    <textarea
-                      required
-                      rows={3}
-                      placeholder="Your Message"
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full pl-11 pr-3 py-2.5 rounded-xl border border-[#E8DED8] bg-white focus:border-[#9F1239] focus:ring-1 focus:ring-[#9F1239] text-xs text-[#2D2626] placeholder-[#8C7E7E] focus:outline-none transition-all shadow-2xs resize-none"
-                    />
+                    {errors.message && (
+                      <p className="text-[10px] sm:text-[10.5px] text-rose-500 font-medium pl-1 mt-1 leading-tight flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3 shrink-0" />
+                        <span>{errors.message}</span>
+                      </p>
+                    )}
                   </div>
 
                   {/* Submit Button with Gold Dividers */}
-                  <div className="flex items-center justify-center gap-3 pt-2">
+                  <div className="flex items-center justify-center gap-3 pt-2 sm:pt-2.5">
                     <span className="hidden sm:flex items-center gap-1.5 text-[#D4AF37]">
                       <span className="w-10 h-[1px] bg-[#D4AF37]/60"></span>
                       <span className="text-xs">♡</span>
