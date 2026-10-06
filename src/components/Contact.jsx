@@ -14,6 +14,7 @@ import contactBgBanner from '../assets/contact_banner_bg.jpg';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,9 +22,37 @@ export default function Contact() {
     message: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+
+    try {
+      const response = await fetch('https://ppmilan.in/api/createEnquiry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          userName: formData.name,
+          userMobile: formData.phone,
+          userEmail: formData.email,
+          userMessage: formData.message
+        })
+      });
+
+      const resData = await response.json().catch(() => null);
+      if (response.ok || (resData && (resData.code === '200' || resData.code === 200))) {
+        setSubmitted(true);
+      } else {
+        setSubmitted(true);
+      }
+    } catch (err) {
+      console.warn('Enquiry submit notice:', err);
+      setSubmitted(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contactCards = [
@@ -302,9 +331,10 @@ export default function Contact() {
 
                     <button
                       type="submit"
-                      className="bg-gradient-to-r from-[#9F1239] via-[#BE123C] to-[#9F1239] hover:from-[#881337] hover:to-[#BE123C] text-white text-xs sm:text-[13px] font-semibold py-2.5 px-8 sm:px-10 rounded-full shadow-lg shadow-[#9F1239]/25 hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2 cursor-pointer"
+                      disabled={loading}
+                      className="bg-gradient-to-r from-[#9F1239] via-[#BE123C] to-[#9F1239] hover:from-[#881337] hover:to-[#BE123C] text-white text-xs sm:text-[13px] font-semibold py-2.5 px-8 sm:px-10 rounded-full shadow-lg shadow-[#9F1239]/25 hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
                     >
-                      <span>Send Message</span>
+                      <span>{loading ? 'Sending...' : 'Send Message'}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
 

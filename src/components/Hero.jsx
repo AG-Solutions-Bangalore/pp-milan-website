@@ -130,25 +130,25 @@ export default function Hero({ onReplayWelcome }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.7 }}
-              className="pt-3 flex flex-wrap items-center gap-4 sm:gap-6 border-t border-[#F0E4D3] w-full"
+              className="pt-3 flex items-center justify-between sm:justify-start gap-1.5 sm:gap-6 border-t border-[#F0E4D3] w-full"
             >
-              <div className="inline-flex items-center gap-2 text-xs sm:text-[13px] font-medium text-[#4A3D3D]">
-                <div className="w-7 h-7 rounded-full bg-[#FFF0F3] text-[#9F1239] flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[13px] font-medium text-[#4A3D3D] whitespace-nowrap shrink-0">
+                <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-[#FFF0F3] text-[#9F1239] flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
                 <span>Verified Profiles</span>
               </div>
 
-              <div className="inline-flex items-center gap-2 text-xs sm:text-[13px] font-medium text-[#4A3D3D]">
-                <div className="w-7 h-7 rounded-full bg-[#FFF0F3] text-[#9F1239] flex items-center justify-center shrink-0">
-                  <Lock className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[13px] font-medium text-[#4A3D3D] whitespace-nowrap shrink-0">
+                <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-[#FFF0F3] text-[#9F1239] flex items-center justify-center shrink-0">
+                  <Lock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
                 <span>Privacy Protected</span>
               </div>
 
-              <div className="inline-flex items-center gap-2 text-xs sm:text-[13px] font-medium text-[#4A3D3D]">
-                <div className="w-7 h-7 rounded-full bg-[#FFF0F3] text-[#9F1239] flex items-center justify-center shrink-0">
-                  <Users className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[13px] font-medium text-[#4A3D3D] whitespace-nowrap shrink-0">
+                <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-[#FFF0F3] text-[#9F1239] flex items-center justify-center shrink-0">
+                  <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
                 <span>Community Focused</span>
               </div>
@@ -176,13 +176,13 @@ export default function Hero({ onReplayWelcome }) {
                 </div>
               </div>
 
-              {/* Handwritten Note positioned to the RIGHT of the couple, clearing their faces */}
+              {/* Handwritten Note positioned nicely to the right of the couple, fully visible on mobile */}
               <motion.div
-                initial={{ opacity: 0, x: 30, y: -10, scale: 0.9, rotate: -14 }}
+                initial={{ opacity: 0, x: 20, y: -10, scale: 0.9, rotate: -10 }}
                 whileInView={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: -6 }}
                 viewport={{ once: false, amount: 0.3 }}
                 transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-                className="absolute top-5 sm:top-7 left-[75%] sm:left-[75%] lg:left-[66%] z-20 pointer-events-none select-none font-script text-xl sm:text-2xl lg:text-[25px] text-[#9F1239] font-bold tracking-wide drop-shadow-[0_2px_4px_rgba(255,255,255,0.95)]"
+                className="absolute top-4 sm:top-7 right-2 sm:right-3 lg:right-auto lg:left-[66%] z-20 pointer-events-none select-none font-script text-[17px] sm:text-2xl lg:text-[25px] text-[#9F1239] font-bold tracking-wide drop-shadow-[0_2px_4px_rgba(255,255,255,0.95)]"
               >
                 <motion.div
                   animate={{ y: [0, -5, 0], rotate: [-6, -4, -6] }}
@@ -190,7 +190,7 @@ export default function Hero({ onReplayWelcome }) {
                   className="flex flex-col items-start leading-tight whitespace-nowrap"
                 >
                   <motion.span
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 15 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: false, amount: 0.3 }}
                     transition={{ duration: 0.6, delay: 0.3 }}
@@ -198,11 +198,11 @@ export default function Hero({ onReplayWelcome }) {
                     Same Traditions,
                   </motion.span>
                   <motion.span 
-                    initial={{ opacity: 0, x: 25 }}
+                    initial={{ opacity: 0, x: 20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: false, amount: 0.3 }}
                     transition={{ duration: 0.6, delay: 0.5 }}
-                    className="flex items-center gap-1.5"
+                    className="flex items-center gap-1"
                   >
                     Stronger Together
                     <motion.span
@@ -215,7 +215,7 @@ export default function Hero({ onReplayWelcome }) {
                         ease: "easeInOut",
                         repeatDelay: 0.6
                       }}
-                      className="inline-block ml-1 text-xl sm:text-2xl text-[#E11D48] select-none"
+                      className="inline-block ml-0.5 text-base sm:text-2xl text-[#E11D48] select-none"
                       aria-hidden="true"
                     >
                       ❤️

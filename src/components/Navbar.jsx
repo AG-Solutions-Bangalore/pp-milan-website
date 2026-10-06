@@ -126,7 +126,7 @@ export default function Navbar({ onReplayWelcome }) {
           {/* Right Action Buttons */}
           <div className="hidden lg:flex items-center gap-3">
             {/* Search Button */}
-            <div className="relative">
+            {/* <div className="relative">
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
                 className="w-9 h-9 rounded-full flex items-center justify-center text-[#5C4D4D] hover:text-[#9F1239] hover:bg-[#F4ECE1] transition-colors cursor-pointer"
@@ -151,7 +151,7 @@ export default function Navbar({ onReplayWelcome }) {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Submit Bio-Data Crimson Pill */}
             <Link
@@ -161,22 +161,22 @@ export default function Navbar({ onReplayWelcome }) {
               <span>Submit Bio-Data</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
-          </div>
+          </div> 
 
           {/* Mobile menu toggle */}
-          <div className="flex lg:hidden items-center gap-2">
+          <div className="flex lg:hidden items-center gap-1.5 sm:gap-2 shrink-0">
             <Link
               to="/registration"
-              className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#9F1239] text-white"
+              className="text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full bg-[#9F1239] hover:bg-[#881337] text-white whitespace-nowrap shrink-0 transition-colors shadow-xs"
             >
               Submit Bio-Data
             </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-[#4A3E3E] hover:bg-[#F4ECE1] transition-colors focus:outline-none"
+              className="p-1.5 sm:p-2 rounded-lg text-[#4A3E3E] hover:bg-[#F4ECE1] transition-colors focus:outline-none shrink-0"
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6 text-[#9F1239]" /> : <Menu className="w-6 h-6 text-[#4A3E3E]" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6 text-[#9F1239]" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-[#4A3E3E]" />}
             </button>
           </div>
         </div>
