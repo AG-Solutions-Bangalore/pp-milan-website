@@ -77,7 +77,7 @@ export default function AppSection() {
             {/* Store Download Buttons */}
             <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 pt-2">
               {/* Apple App Store */}
-              <a
+              {/* <a
                 href="#download-ios"
                 onClick={(e) => { 
                   e.preventDefault(); 
@@ -97,23 +97,16 @@ export default function AppSection() {
                   <p className="text-[8.5px] uppercase tracking-wider text-neutral-300 leading-none">Download on the</p>
                   <p className="text-xs font-bold leading-tight mt-0.5">App Store</p>
                 </div>
-              </a>
+              </a> */}
 
               {/* Google Play Store */}
               <a
-                href="#download-android"
-                onClick={(e) => { 
-                  e.preventDefault(); 
-                  openModal({
-                    title: "Android App Launching Soon!",
-                    tag: "Google Play Store",
-                    iconType: "app",
-                    content: "The PP Milan Android application is preparing for launch on Google Play! Experience instant partner search, horoscope compatibility, and verified community profiles directly from your phone."
-                  });
-                }}
-                className="inline-flex items-center gap-2.5 px-4 py-2 bg-black hover:bg-neutral-800 text-white rounded-xl shadow-xs transition-all duration-300 group cursor-pointer"
+                href="https://play.google.com/store/apps/details?id=com.ppm.agsolutions&pcampaignid=web_share"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 px-4 py-2 bg-black hover:bg-neutral-800 text-white rounded-xl shadow-xs transition-all duration-300 group cursor-pointer hover:scale-105"
               >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
                   <path d="M3.609 1.814L13.792 12 3.61 22.186c-.366-.364-.61-.884-.61-1.464V3.278c0-.58.244-1.1.609-1.464zm11.24 11.244l2.585 2.585-11.75 6.786 9.165-9.371zm0-2.116L5.684 1.571l11.75 6.786-2.585 2.585zm1.488 1.058l3.704 2.139c.854.493.854 1.299 0 1.792l-3.704 2.139-2.032-2.032 2.032-2.038z"/>
                 </svg>
                 <div className="text-left">

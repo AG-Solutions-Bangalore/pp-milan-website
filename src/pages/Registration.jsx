@@ -1,66 +1,273 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { ShieldCheck, Heart, User, Briefcase, Users, Sun, FileText, Upload, CheckCircle2, ArrowLeft, ArrowRight, Sparkles, AlertCircle, Camera, Award } from 'lucide-react';
+import logoImg from '../assets/PPMilan_logo.png';
+import {
+  ShieldCheck,
+  Heart,
+  User,
+  Briefcase,
+  Users,
+  Sun,
+  FileText,
+  Upload,
+  CheckCircle2,
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
+  AlertCircle,
+  Camera,
+  Award
+} from 'lucide-react';
 import confetti from 'canvas-confetti';
+
+const API_BASE = 'https://ppmilan.in/api';
+
+// Fallback data in case of offline/network hiccups
+const FALLBACK_COMMUNITIES = [
+  { id: 1, community_name: 'Pandit' },
+  { id: 2, community_name: 'Prajapati' }
+];
+
+const FALLBACK_EDUCATIONS = [
+  { id: 1, education_name: 'Schooling (up to 10th )' },
+  { id: 2, education_name: 'PUC/12th Std' },
+  { id: 3, education_name: 'Diploma' },
+  { id: 4, education_name: 'BA' },
+  { id: 5, education_name: 'BSc' },
+  { id: 6, education_name: 'BCom' },
+  { id: 7, education_name: 'BE' },
+  { id: 8, education_name: 'BTech' },
+  { id: 9, education_name: 'BPharm' },
+  { id: 10, education_name: 'BCA' },
+  { id: 11, education_name: 'BBA' },
+  { id: 12, education_name: 'BBM' },
+  { id: 13, education_name: 'LLB' },
+  { id: 14, education_name: 'CA' },
+  { id: 15, education_name: 'CS' },
+  { id: 16, education_name: 'MBA' },
+  { id: 17, education_name: 'MEd' },
+  { id: 18, education_name: 'MCom' },
+  { id: 19, education_name: 'MSc' },
+  { id: 20, education_name: 'MCA' },
+  { id: 21, education_name: 'MPharm' },
+  { id: 22, education_name: 'MBBS' },
+  { id: 23, education_name: 'BDS' },
+  { id: 24, education_name: 'MD' },
+  { id: 25, education_name: 'MD Dental' },
+  { id: 26, education_name: 'MTech' },
+  { id: 27, education_name: 'MA' },
+  { id: 28, education_name: 'MS' },
+  { id: 29, education_name: 'MFM' },
+  { id: 30, education_name: 'MPA' },
+  { id: 31, education_name: 'Phd' },
+  { id: 32, education_name: 'Other' }
+];
+
+const FALLBACK_GOTRAS = {
+  1: [
+    { gotra_name: 'Bharadwaj' },
+    { gotra_name: 'Vashishtha' },
+    { gotra_name: 'Kaushik' },
+    { gotra_name: 'Gautam' },
+    { gotra_name: 'Atri' },
+    { gotra_name: 'Kashyap' },
+    { gotra_name: 'Agastya' },
+    { gotra_name: 'Bhrigu' },
+    { gotra_name: 'Vishwamitra' },
+    { gotra_name: 'Jamadagni' },
+    { gotra_name: 'Parashar' },
+    { gotra_name: 'Shandilya' },
+    { gotra_name: 'Dhananjaya' },
+    { gotra_name: 'Mudgal' },
+    { gotra_name: 'Upamanyu' },
+    { gotra_name: 'Srivatsa' },
+    { gotra_name: 'Vatsa' },
+    { gotra_name: 'Mandavya' },
+    { gotra_name: 'Chyavana' },
+    { gotra_name: 'Sankrithi' },
+    { gotra_name: 'Dhar' },
+    { gotra_name: 'Kaul' },
+    { gotra_name: 'Bhan' },
+    { gotra_name: 'Razdan' },
+    { gotra_name: 'Raina' },
+    { gotra_name: 'Kak' },
+    { gotra_name: 'Mattoo' },
+    { gotra_name: 'Sharga' },
+    { gotra_name: 'Bamzai' },
+    { gotra_name: 'Bodinayana' },
+    { gotra_name: 'Vadula' },
+    { gotra_name: 'Gargya' },
+    { gotra_name: 'Kutsa' },
+    { gotra_name: 'Maudgalya' },
+    { gotra_name: 'Taittiriya' },
+    { gotra_name: 'Bihaut' },
+    { gotra_name: 'Azodiya' },
+    { gotra_name: 'Kanojia' },
+    { gotra_name: 'Maghiya' }
+  ],
+  2: [
+    { gotra_name: 'Gautam' },
+    { gotra_name: 'Atri' },
+    { gotra_name: 'Upmanyu' },
+    { gotra_name: 'Harita' },
+    { gotra_name: 'Vashishta' },
+    { gotra_name: 'Kashyap' },
+    { gotra_name: 'Vishwakarma' },
+    { gotra_name: 'Bharadwaj' },
+    { gotra_name: 'Vishwamitra' },
+    { gotra_name: 'Shiva' },
+    { gotra_name: 'Jamadagni' },
+    { gotra_name: 'Agastya' },
+    { gotra_name: 'Angeeras' }
+  ]
+};
 
 export default function Registration() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [refId, setRefId] = useState('');
   const [errors, setErrors] = useState({});
 
-  // Form State
+  // Dynamic API state
+  const [communities, setCommunities] = useState(FALLBACK_COMMUNITIES);
+  const [educations, setEducations] = useState(FALLBACK_EDUCATIONS);
+  const [gotras, setGotras] = useState([]);
+  const [loadingGotras, setLoadingGotras] = useState(false);
+
+  // Form State with exact field names matching the image
   const [formData, setFormData] = useState({
-    // Personal
+    // Step 1: Personal & Contact
     fullName: '',
-    gender: 'Male',
+    gender: '',
     dob: '',
-    age: '',
-    height: "5' 8\"",
-    currentLocation: '',
-    nativePlace: '',
-    
-    // Professional
-    education: '',
-    profession: '',
-    company: '',
-    incomeRange: '10 - 15 LPA',
-
-    // Family
-    fatherName: '',
-    motherName: '',
-    familyDetails: '',
-    community: 'Prajapati',
-    gothra: '',
-
-    // Preferences
-    preferredAge: '24 - 28',
-    preferredLocation: 'Bengaluru / Anywhere',
-    educationPreference: 'Graduate / Post Graduate',
-    professionPreference: 'Software / Professional / Business',
-
-    // Horoscope
-    rashi: '',
-    nakshatra: '',
-    manglikStatus: 'Non-Manglik',
-
-    // Contact
-    phone: '',
+    birthTime: '',
+    heightFeet: '5',
+    heightInch: '6',
     email: '',
+    mainContactNo: '',
+    whatsappNo: '',
 
-    // Files
+    // Step 2: Community, Gotra & Education
+    community_id: '',
+    community_name: '',
+    gotra: '',
+    education: '',
+    occupation: '',
+    workingCity: '',
+    placeOfBirth: '',
+    villageCityState: '',
+
+    // Step 3: Family & References
+    fatherName: '',
+    referenceName: '',
+    referenceMobile: '',
+    disability: 'No',
+    marriedBefore: 'No',
+    permanentAddress: '',
+    importantNote: '',
+
+    // Step 4: Files
     photoFile: null,
     photoPreview: null,
     bioDataFile: null,
     bioDataName: ''
   });
 
+  // Scroll to top immediately on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, []);
+
+  // Fetch Communities and Educations on mount
+  useEffect(() => {
+    fetch(`${API_BASE}/getCommunity`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch communities');
+        return res.json();
+      })
+      .then((resData) => {
+        if (resData && Array.isArray(resData.data)) {
+          setCommunities(resData.data);
+        }
+      })
+      .catch((err) => {
+        console.warn('Using fallback communities:', err.message);
+        setCommunities(FALLBACK_COMMUNITIES);
+      });
+
+    fetch(`${API_BASE}/getEducation`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch educations');
+        return res.json();
+      })
+      .then((resData) => {
+        if (resData && Array.isArray(resData.data)) {
+          setEducations(resData.data);
+        }
+      })
+      .catch((err) => {
+        console.warn('Using fallback educations:', err.message);
+        setEducations(FALLBACK_EDUCATIONS);
+      });
+  }, []);
+
+  // Fetch Gotras when Community changes
+  useEffect(() => {
+    if (!formData.community_id) {
+      setGotras([]);
+      return;
+    }
+
+    setLoadingGotras(true);
+    fetch(`${API_BASE}/getGotra/${formData.community_id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch gotras');
+        return res.json();
+      })
+      .then((resData) => {
+        if (resData && Array.isArray(resData.data)) {
+          const unique = [];
+          const seen = new Set();
+          resData.data.forEach((item) => {
+            const name = item.gotra_name || item.name;
+            if (name && !seen.has(name.toLowerCase())) {
+              seen.add(name.toLowerCase());
+              unique.push(item);
+            }
+          });
+          setGotras(unique);
+        } else {
+          setGotras(FALLBACK_GOTRAS[formData.community_id] || []);
+        }
+      })
+      .catch((err) => {
+        console.warn('Using fallback gotras:', err.message);
+        setGotras(FALLBACK_GOTRAS[formData.community_id] || []);
+      })
+      .finally(() => {
+        setLoadingGotras(false);
+      });
+  }, [formData.community_id]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === 'community_id') {
+      const selected = communities.find((c) => String(c.id) === String(value));
+      setFormData((prev) => ({
+        ...prev,
+        community_id: value,
+        community_name: selected ? selected.community_name : '',
+        gotra: ''
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -74,6 +281,9 @@ export default function Registration() {
         photoFile: file,
         photoPreview: URL.createObjectURL(file)
       }));
+      if (errors.photoFile) {
+        setErrors((prev) => ({ ...prev, photoFile: '' }));
+      }
     }
   };
 
@@ -90,18 +300,37 @@ export default function Registration() {
 
   const validateStep = (step) => {
     const newErrors = {};
+
     if (step === 1) {
-      if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
-      if (!formData.dob) newErrors.dob = "Date of birth is required";
-      if (!formData.currentLocation.trim()) newErrors.currentLocation = "Current location is required";
-      if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-      if (!formData.email.trim()) newErrors.email = "Email address is required";
+      if (!formData.fullName.trim()) newErrors.fullName = 'Full Name is required';
+      if (!formData.gender) newErrors.gender = 'Gender is required';
+      if (!formData.dob) newErrors.dob = 'Date of birth is required';
+      if (!formData.birthTime) newErrors.birthTime = 'Time of birth is required';
+      if (!formData.email.trim()) {
+        newErrors.email = 'Email address is required';
+      } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        newErrors.email = 'Please enter a valid email address';
+      }
+      if (!formData.mainContactNo.trim()) newErrors.mainContactNo = 'Main Contact No is required';
     } else if (step === 2) {
-      if (!formData.education.trim()) newErrors.education = "Education detail is required";
-      if (!formData.profession.trim()) newErrors.profession = "Profession detail is required";
-      if (!formData.fatherName.trim()) newErrors.fatherName = "Father's name is required";
-      if (!formData.gothra.trim()) newErrors.gothra = "Gothra is required";
+      if (!formData.community_id) newErrors.community_id = 'My Community is required';
+      if (!formData.gotra) newErrors.gotra = 'Gotra is required';
+      if (!formData.education) newErrors.education = 'Education is required';
+      if (!formData.occupation.trim()) newErrors.occupation = 'Occupation is required';
+      if (!formData.workingCity.trim()) newErrors.workingCity = 'Working City is required';
+      if (!formData.placeOfBirth.trim()) newErrors.placeOfBirth = 'Place of Birth is required';
+      if (!formData.villageCityState.trim()) newErrors.villageCityState = 'Village, City / State is required';
+    } else if (step === 3) {
+      if (!formData.fatherName.trim()) newErrors.fatherName = 'Father Name is required';
+      if (!formData.marriedBefore) newErrors.marriedBefore = 'Please select marital status';
+      if (!formData.disability) newErrors.disability = 'Please select disability option';
+      if (!formData.permanentAddress.trim()) newErrors.permanentAddress = 'Permanent Address is required';
+    } else if (step === 4) {
+      if (!formData.photoFile && !formData.photoPreview) {
+        newErrors.photoFile = 'Candidate photo is required';
+      }
     }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -118,18 +347,61 @@ export default function Registration() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateStep(currentStep)) {
-      const generatedId = "PPM-" + Math.floor(100000 + Math.random() * 900000);
-      setRefId(generatedId);
+    if (!validateStep(currentStep)) return;
+
+    setSubmitting(true);
+    const generatedId = 'PPM-' + Math.floor(100000 + Math.random() * 900000);
+    setRefId(generatedId);
+
+    try {
+      const payload = new FormData();
+      payload.append('name', formData.fullName);
+      payload.append('profile_father_full_name', formData.fatherName);
+      payload.append('profile_date_of_birth', formData.dob);
+      payload.append('profile_gender', formData.gender);
+      payload.append('profile_time_of_birth', formData.birthTime);
+      payload.append('profile_place_of_birth', formData.placeOfBirth);
+      payload.append('email', formData.email);
+      payload.append('profile_mobile', formData.mainContactNo);
+      payload.append('profile_whatsapp', formData.whatsappNo || formData.mainContactNo);
+      payload.append('profile_main_contact_num', formData.mainContactNo);
+      payload.append('profile_comunity_name', formData.community_name || formData.community_id);
+      payload.append('profile_gotra', formData.gotra);
+      payload.append('profile_permanent_address', formData.permanentAddress);
+      payload.append('profile_working_city', formData.workingCity);
+      payload.append('profile_village_city', formData.villageCityState);
+      payload.append('profile_ref_contact_name', formData.referenceName || '');
+      payload.append('profile_ref_contact_mobile', formData.referenceMobile || '');
+      payload.append('profile_education', formData.education);
+      payload.append('profile_occupation', formData.occupation);
+      payload.append('profile_have_married_before', formData.marriedBefore);
+      payload.append('heightFeet', formData.heightFeet);
+      payload.append('heightInch', formData.heightInch);
+      payload.append('profile_physical_disablity', formData.disability);
+      payload.append('profile_note', formData.importantNote || '');
+      if (formData.photoFile) {
+        payload.append('profile_photo', formData.photoFile);
+      }
+
+      await fetch(`${API_BASE}/createRegistration`, {
+        method: 'POST',
+        body: payload
+      }).catch((err) => {
+        console.warn('Backend createRegistration notice:', err);
+      });
+    } catch (err) {
+      console.warn('Registration dispatch notice:', err);
+    } finally {
+      setSubmitting(false);
       setSubmitted(true);
-      
-      // Trigger festive celebration confetti
+
+      // Trigger celebration confetti
       try {
         confetti({
-          particleCount: 100,
-          spread: 70,
+          particleCount: 120,
+          spread: 80,
           origin: { y: 0.6 }
         });
       } catch (err) {
@@ -140,18 +412,17 @@ export default function Registration() {
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-charcoal-800 flex flex-col justify-between">
-      
       {/* Registration Header Bar */}
       <header className="bg-maroon-950 text-white border-b border-gold-500/30 py-4 px-4 sm:px-8 sticky top-0 z-50 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold-300 via-gold-400 to-gold-600 p-0.5 flex items-center justify-center">
-              <div className="w-full h-full bg-maroon-900 rounded-full flex items-center justify-center">
-                <Heart className="w-5 h-5 text-gold-400 fill-gold-400/20" />
-              </div>
-            </div>
+          <Link to="/" className="flex items-center gap-3 group focus:outline-none">
+            <img
+              src={logoImg}
+              alt="PP Milan Logo"
+              className="w-11 h-11 object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
+            />
             <div>
-              <span className="font-serif text-xl font-bold tracking-wider text-white block">PPM</span>
+              <span className="font-serif text-xl font-bold tracking-wider text-white block">PP MILAN</span>
               <span className="text-[10px] text-cream-200 tracking-wider font-light">Pandith Prajapati Milan</span>
             </div>
           </Link>
@@ -168,7 +439,6 @@ export default function Registration() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8 sm:py-12">
-        
         {/* Title */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 text-maroon-800 font-semibold text-xs uppercase tracking-widest mb-2">
@@ -207,23 +477,68 @@ export default function Registration() {
               {refId}
             </div>
 
-            {/* Candidate Summary Box */}
+            {/* Candidate Summary Box with Exact Field Names */}
             <div className="bg-cream-100 p-6 rounded-2xl border border-cream-300 max-w-xl mx-auto text-left text-xs space-y-3">
-              <h4 className="font-bold text-maroon-900 font-serif text-sm border-b border-cream-300 pb-2">Candidate Registration Details</h4>
-              <div className="grid grid-cols-2 gap-2">
-                <p><span className="text-charcoal-600 font-medium">Candidate Name:</span> <strong className="text-charcoal-900">{formData.fullName}</strong></p>
-                <p><span className="text-charcoal-600 font-medium">Gender:</span> <strong className="text-charcoal-900">{formData.gender}</strong></p>
-                <p><span className="text-charcoal-600 font-medium">Community:</span> <strong className="text-gold-600">{formData.community}</strong></p>
-                <p><span className="text-charcoal-600 font-medium">Gothra:</span> <strong className="text-gold-600">{formData.gothra || 'N/A'}</strong></p>
-                <p><span className="text-charcoal-600 font-medium">Phone:</span> <strong className="text-charcoal-900">{formData.phone}</strong></p>
-                <p><span className="text-charcoal-600 font-medium">Email:</span> <strong className="text-charcoal-900">{formData.email}</strong></p>
-                <p><span className="text-charcoal-600 font-medium">Location:</span> <strong className="text-charcoal-900">{formData.currentLocation}</strong></p>
-                <p><span className="text-charcoal-600 font-medium">Bio-Data File:</span> <strong className="text-emerald-700">{formData.bioDataName || 'Uploaded'}</strong></p>
+              <h4 className="font-bold text-maroon-900 font-serif text-sm border-b border-cream-300 pb-2">
+                Candidate Registration Details
+              </h4>
+              <div className="grid grid-cols-2 gap-2.5">
+                <p>
+                  <span className="text-charcoal-600 font-medium">Full Name:</span>{' '}
+                  <strong className="text-charcoal-900">{formData.fullName}</strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">Gender:</span>{' '}
+                  <strong className="text-charcoal-900">{formData.gender}</strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">Date of Birth:</span>{' '}
+                  <strong className="text-charcoal-900">{formData.dob}</strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">Time of Birth:</span>{' '}
+                  <strong className="text-charcoal-900">{formData.birthTime}</strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">My Community:</span>{' '}
+                  <strong className="text-gold-600">{formData.community_name || 'N/A'}</strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">Gotra:</span>{' '}
+                  <strong className="text-gold-600">{formData.gotra}</strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">Education:</span>{' '}
+                  <strong className="text-charcoal-900">{formData.education}</strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">Occupation:</span>{' '}
+                  <strong className="text-charcoal-900">{formData.occupation}</strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">Main Contact No:</span>{' '}
+                  <strong className="text-charcoal-900">{formData.mainContactNo}</strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">Email:</span>{' '}
+                  <strong className="text-charcoal-900">{formData.email}</strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">Height:</span>{' '}
+                  <strong className="text-charcoal-900">
+                    {formData.heightFeet} Ft {formData.heightInch} In
+                  </strong>
+                </p>
+                <p>
+                  <span className="text-charcoal-600 font-medium">Working City:</span>{' '}
+                  <strong className="text-charcoal-900">{formData.workingCity}</strong>
+                </p>
               </div>
             </div>
 
             <p className="text-xs text-charcoal-600 max-w-md mx-auto">
-              Our coordinator will contact you at <span className="font-semibold text-maroon-900">{formData.phone}</span> within 24–48 hours after background verification.
+              Our coordinator will contact you at{' '}
+              <span className="font-semibold text-maroon-900">{formData.mainContactNo}</span> within 24–48 hours after background verification.
             </p>
 
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -238,60 +553,89 @@ export default function Registration() {
         ) : (
           /* FORM INTERFACE WITH STEP INDICATOR */
           <div className="bg-white rounded-3xl border border-gold-400/30 shadow-elevated overflow-hidden">
-            
             {/* Step Progress Bar */}
             <div className="bg-maroon-950 text-white p-4 sm:p-6 border-b border-gold-500/30">
               <div className="grid grid-cols-4 gap-2 text-center text-xs">
-                
                 {/* Step 1 */}
-                <div className={`flex flex-col items-center gap-1.5 ${currentStep >= 1 ? 'text-gold-300 font-bold' : 'text-cream-300/60'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${currentStep >= 1 ? 'bg-gold-400 text-maroon-950' : 'bg-maroon-900 text-cream-300'}`}>
+                <div
+                  className={`flex flex-col items-center gap-1.5 ${
+                    currentStep >= 1 ? 'text-gold-300 font-bold' : 'text-cream-300/60'
+                  }`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                      currentStep >= 1 ? 'bg-gold-400 text-maroon-950' : 'bg-maroon-900 text-cream-300'
+                    }`}
+                  >
                     1
                   </div>
                   <span className="hidden sm:inline">Personal & Contact</span>
                 </div>
 
                 {/* Step 2 */}
-                <div className={`flex flex-col items-center gap-1.5 ${currentStep >= 2 ? 'text-gold-300 font-bold' : 'text-cream-300/60'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${currentStep >= 2 ? 'bg-gold-400 text-maroon-950' : 'bg-maroon-900 text-cream-300'}`}>
+                <div
+                  className={`flex flex-col items-center gap-1.5 ${
+                    currentStep >= 2 ? 'text-gold-300 font-bold' : 'text-cream-300/60'
+                  }`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                      currentStep >= 2 ? 'bg-gold-400 text-maroon-950' : 'bg-maroon-900 text-cream-300'
+                    }`}
+                  >
                     2
                   </div>
-                  <span className="hidden sm:inline">Career & Family</span>
+                  <span className="hidden sm:inline">Community & Education</span>
                 </div>
 
                 {/* Step 3 */}
-                <div className={`flex flex-col items-center gap-1.5 ${currentStep >= 3 ? 'text-gold-300 font-bold' : 'text-cream-300/60'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${currentStep >= 3 ? 'bg-gold-400 text-maroon-950' : 'bg-maroon-900 text-cream-300'}`}>
+                <div
+                  className={`flex flex-col items-center gap-1.5 ${
+                    currentStep >= 3 ? 'text-gold-300 font-bold' : 'text-cream-300/60'
+                  }`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                      currentStep >= 3 ? 'bg-gold-400 text-maroon-950' : 'bg-maroon-900 text-cream-300'
+                    }`}
+                  >
                     3
                   </div>
-                  <span className="hidden sm:inline">Preferences & Horoscope</span>
+                  <span className="hidden sm:inline">Family & Address</span>
                 </div>
 
                 {/* Step 4 */}
-                <div className={`flex flex-col items-center gap-1.5 ${currentStep >= 4 ? 'text-gold-300 font-bold' : 'text-cream-300/60'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${currentStep >= 4 ? 'bg-gold-400 text-maroon-950' : 'bg-maroon-900 text-cream-300'}`}>
+                <div
+                  className={`flex flex-col items-center gap-1.5 ${
+                    currentStep >= 4 ? 'text-gold-300 font-bold' : 'text-cream-300/60'
+                  }`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                      currentStep >= 4 ? 'bg-gold-400 text-maroon-950' : 'bg-maroon-900 text-cream-300'
+                    }`}
+                  >
                     4
                   </div>
                   <span className="hidden sm:inline">Photo & Documents</span>
                 </div>
-
               </div>
             </div>
 
             {/* Form Step Body */}
             <form onSubmit={handleSubmit} className="p-6 sm:p-10">
-              
               {/* STEP 1: Personal & Contact */}
               {currentStep === 1 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div className="flex items-center gap-2 border-b border-cream-200 pb-3">
                     <User className="w-5 h-5 text-maroon-800" />
-                    <h3 className="font-serif text-lg font-bold text-maroon-900">Step 1: Personal & Contact Information</h3>
+                    <h3 className="font-serif text-lg font-bold text-maroon-900">
+                      Step 1: Personal & Contact Details
+                    </h3>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    
-                    {/* Full Name */}
+                    {/* Full Name * */}
                     <div>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
                         Full Name *
@@ -299,15 +643,17 @@ export default function Registration() {
                       <input
                         type="text"
                         name="fullName"
-                        placeholder="Candidate's Full Name"
+                        placeholder="Enter full name"
                         value={formData.fullName}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.fullName ? 'border-red-500' : 'border-cream-300'} text-sm focus:outline-none focus:border-gold-500`}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.fullName ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
                       />
                       {errors.fullName && <p className="text-[11px] text-red-600 mt-1">{errors.fullName}</p>}
                     </div>
 
-                    {/* Gender */}
+                    {/* Gender * */}
                     <div>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
                         Gender *
@@ -316,14 +662,18 @@ export default function Registration() {
                         name="gender"
                         value={formData.gender}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500 bg-white"
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.gender ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500 bg-white`}
                       >
-                        <option value="Male">Male (Groom Candidate)</option>
-                        <option value="Female">Female (Bride Candidate)</option>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
                       </select>
+                      {errors.gender && <p className="text-[11px] text-red-600 mt-1">{errors.gender}</p>}
                     </div>
 
-                    {/* DOB */}
+                    {/* Date of Birth * */}
                     <div>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
                         Date of Birth *
@@ -333,83 +683,73 @@ export default function Registration() {
                         name="dob"
                         value={formData.dob}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.dob ? 'border-red-500' : 'border-cream-300'} text-sm focus:outline-none focus:border-gold-500 bg-white`}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.dob ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500 bg-white`}
                       />
                       {errors.dob && <p className="text-[11px] text-red-600 mt-1">{errors.dob}</p>}
                     </div>
 
-                    {/* Age */}
+                    {/* Time of Birth * */}
                     <div>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Age (Years)
+                        Time of Birth *
                       </label>
                       <input
-                        type="number"
-                        name="age"
-                        placeholder="e.g. 28"
-                        value={formData.age}
+                        type="time"
+                        name="birthTime"
+                        value={formData.birthTime}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.birthTime ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500 bg-white`}
                       />
+                      {errors.birthTime && <p className="text-[11px] text-red-600 mt-1">{errors.birthTime}</p>}
                     </div>
 
-                    {/* Height */}
+                    {/* Height * (Feet & Inch) */}
                     <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Height
-                      </label>
-                      <select
-                        name="height"
-                        value={formData.height}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500 bg-white"
-                      >
-                        <option>5' 2"</option>
-                        <option>5' 4"</option>
-                        <option>5' 6"</option>
-                        <option>5' 8"</option>
-                        <option>5' 10"</option>
-                        <option>6' 0"</option>
-                        <option>6' 2"+</option>
-                      </select>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-semibold text-charcoal-800">
+                          Height *
+                        </label>
+                        <div className="flex items-center gap-6 text-[11px] text-charcoal-600 pr-3">
+                          <span>Feet:</span>
+                          <span>Inch:</span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <select
+                          name="heightFeet"
+                          value={formData.heightFeet}
+                          onChange={handleChange}
+                          className="w-full px-3 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500 bg-white"
+                        >
+                          <option value="4">4 Ft</option>
+                          <option value="5">5 Ft</option>
+                          <option value="6">6 Ft</option>
+                          <option value="7">7 Ft</option>
+                        </select>
+
+                        <select
+                          name="heightInch"
+                          value={formData.heightInch}
+                          onChange={handleChange}
+                          className="w-full px-3 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500 bg-white"
+                        >
+                          {[...Array(12).keys()].map((num) => (
+                            <option key={num} value={num}>
+                              {num} In
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
-                    {/* Location */}
+                    {/* Email * */}
                     <div>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Current City / Location *
-                      </label>
-                      <input
-                        type="text"
-                        name="currentLocation"
-                        placeholder="e.g. Bengaluru, Karnataka"
-                        value={formData.currentLocation}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.currentLocation ? 'border-red-500' : 'border-cream-300'} text-sm focus:outline-none focus:border-gold-500`}
-                      />
-                      {errors.currentLocation && <p className="text-[11px] text-red-600 mt-1">{errors.currentLocation}</p>}
-                    </div>
-
-                    {/* Phone */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Phone Number *
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        placeholder="+91 98765 43210"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500' : 'border-cream-300'} text-sm focus:outline-none focus:border-gold-500`}
-                      />
-                      {errors.phone && <p className="text-[11px] text-red-600 mt-1">{errors.phone}</p>}
-                    </div>
-
-                    {/* Email */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Email Address *
+                        Email *
                       </label>
                       <input
                         type="email"
@@ -417,342 +757,435 @@ export default function Registration() {
                         placeholder="candidate@example.com"
                         value={formData.email}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-cream-300'} text-sm focus:outline-none focus:border-gold-500`}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.email ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
                       />
                       {errors.email && <p className="text-[11px] text-red-600 mt-1">{errors.email}</p>}
                     </div>
 
+                    {/* Main Contact No * */}
+                    <div>
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Main Contact No *
+                      </label>
+                      <input
+                        type="tel"
+                        name="mainContactNo"
+                        placeholder="+91 98765 43210"
+                        value={formData.mainContactNo}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.mainContactNo ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
+                      />
+                      {errors.mainContactNo && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.mainContactNo}</p>
+                      )}
+                    </div>
+
+                    {/* Whats App No */}
+                    <div>
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Whats App No
+                      </label>
+                      <input
+                        type="tel"
+                        name="whatsappNo"
+                        placeholder="+91 WhatsApp number (optional)"
+                        value={formData.whatsappNo}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* STEP 2: Career & Family */}
+              {/* STEP 2: Community, Gotra & Education */}
               {currentStep === 2 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div className="flex items-center gap-2 border-b border-cream-200 pb-3">
                     <Briefcase className="w-5 h-5 text-maroon-800" />
-                    <h3 className="font-serif text-lg font-bold text-maroon-900">Step 2: Professional & Family Background</h3>
+                    <h3 className="font-serif text-lg font-bold text-maroon-900">
+                      Step 2: Community, Gotra & Education
+                    </h3>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    
-                    {/* Education */}
+                    {/* My Community * (Dynamic: getCommunity) */}
                     <div>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Highest Qualification *
-                      </label>
-                      <input
-                        type="text"
-                        name="education"
-                        placeholder="e.g. B.E / B.Tech, MBA, MBBS, M.Tech"
-                        value={formData.education}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.education ? 'border-red-500' : 'border-cream-300'} text-sm focus:outline-none focus:border-gold-500`}
-                      />
-                      {errors.education && <p className="text-[11px] text-red-600 mt-1">{errors.education}</p>}
-                    </div>
-
-                    {/* Profession */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Profession / Job Title *
-                      </label>
-                      <input
-                        type="text"
-                        name="profession"
-                        placeholder="e.g. Senior Software Engineer"
-                        value={formData.profession}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.profession ? 'border-red-500' : 'border-cream-300'} text-sm focus:outline-none focus:border-gold-500`}
-                      />
-                      {errors.profession && <p className="text-[11px] text-red-600 mt-1">{errors.profession}</p>}
-                    </div>
-
-                    {/* Company */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Company / Organization Name
-                      </label>
-                      <input
-                        type="text"
-                        name="company"
-                        placeholder="e.g. Tech Corp / Private Limited"
-                        value={formData.company}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
-                      />
-                    </div>
-
-                    {/* Income */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Annual Income Range
+                        My Community *
                       </label>
                       <select
-                        name="incomeRange"
-                        value={formData.incomeRange}
+                        name="community_id"
+                        value={formData.community_id}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500 bg-white"
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.community_id ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500 bg-white`}
                       >
-                        <option>5 - 8 LPA</option>
-                        <option>8 - 12 LPA</option>
-                        <option>12 - 18 LPA</option>
-                        <option>18 - 25 LPA</option>
-                        <option>25+ LPA</option>
+                        <option value="">Select Community</option>
+                        {communities.map((comm) => (
+                          <option key={comm.id} value={comm.id}>
+                            {comm.community_name}
+                          </option>
+                        ))}
                       </select>
+                      {errors.community_id && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.community_id}</p>
+                      )}
                     </div>
 
-                    {/* Father Name */}
+                    {/* Gotra * (Dynamic: getGotra/{community_id}) */}
                     <div>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Father's Name *
+                        Gotra *
+                      </label>
+                      <select
+                        name="gotra"
+                        value={formData.gotra}
+                        onChange={handleChange}
+                        disabled={!formData.community_id || loadingGotras}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.gotra ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500 bg-white disabled:bg-cream-100 disabled:cursor-not-allowed`}
+                      >
+                        <option value="">
+                          {!formData.community_id
+                            ? 'Select Community first'
+                            : loadingGotras
+                            ? 'Loading gotras...'
+                            : 'Select Gotra'}
+                        </option>
+                        {gotras.map((g, idx) => {
+                          const gotraName = g.gotra_name || g.name || g;
+                          return (
+                            <option key={`${gotraName}-${idx}`} value={gotraName}>
+                              {gotraName}
+                            </option>
+                          );
+                        })}
+                        {formData.community_id && <option value="Other">Other</option>}
+                      </select>
+                      {errors.gotra && <p className="text-[11px] text-red-600 mt-1">{errors.gotra}</p>}
+                    </div>
+
+                    {/* Education * (Dynamic: getEducation) */}
+                    <div>
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Education *
+                      </label>
+                      <select
+                        name="education"
+                        value={formData.education}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.education ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500 bg-white`}
+                      >
+                        <option value="">Select Education</option>
+                        {educations.map((edu) => {
+                          const eduName = edu.education_name || edu.name || edu;
+                          return (
+                            <option key={edu.id || eduName} value={eduName}>
+                              {eduName}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      {errors.education && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.education}</p>
+                      )}
+                    </div>
+
+                    {/* Occupation * */}
+                    <div>
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Occupation *
+                      </label>
+                      <input
+                        type="text"
+                        name="occupation"
+                        placeholder="e.g. Software Engineer, Business, Doctor"
+                        value={formData.occupation}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.occupation ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
+                      />
+                      {errors.occupation && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.occupation}</p>
+                      )}
+                    </div>
+
+                    {/* Working City * */}
+                    <div>
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Working City *
+                      </label>
+                      <input
+                        type="text"
+                        name="workingCity"
+                        placeholder="e.g. Bengaluru"
+                        value={formData.workingCity}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.workingCity ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
+                      />
+                      {errors.workingCity && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.workingCity}</p>
+                      )}
+                    </div>
+
+                    {/* Place of Birth * */}
+                    <div>
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Place of Birth *
+                      </label>
+                      <input
+                        type="text"
+                        name="placeOfBirth"
+                        placeholder="e.g. Mysuru, Karnataka"
+                        value={formData.placeOfBirth}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.placeOfBirth ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
+                      />
+                      {errors.placeOfBirth && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.placeOfBirth}</p>
+                      )}
+                    </div>
+
+                    {/* Village, City / State * */}
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Village, City / State *
+                      </label>
+                      <input
+                        type="text"
+                        name="villageCityState"
+                        placeholder="e.g. Hubballi, Dharwad, Karnataka"
+                        value={formData.villageCityState}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.villageCityState ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
+                      />
+                      {errors.villageCityState && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.villageCityState}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: Family Background & References */}
+              {currentStep === 3 && (
+                <div className="space-y-6 animate-fadeIn">
+                  <div className="flex items-center gap-2 border-b border-cream-200 pb-3">
+                    <Users className="w-5 h-5 text-maroon-800" />
+                    <h3 className="font-serif text-lg font-bold text-maroon-900">
+                      Step 3: Family, Background & References
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    {/* Father Name * */}
+                    <div>
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Father Name *
                       </label>
                       <input
                         type="text"
                         name="fatherName"
-                        placeholder="Father's Full Name"
+                        placeholder="Father's full name"
                         value={formData.fatherName}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.fatherName ? 'border-red-500' : 'border-cream-300'} text-sm focus:outline-none focus:border-gold-500`}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.fatherName ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500`}
                       />
-                      {errors.fatherName && <p className="text-[11px] text-red-600 mt-1">{errors.fatherName}</p>}
+                      {errors.fatherName && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.fatherName}</p>
+                      )}
                     </div>
 
-                    {/* Mother Name */}
+                    {/* Have you been married before? * */}
                     <div>
                       <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Mother's Name
-                      </label>
-                      <input
-                        type="text"
-                        name="motherName"
-                        placeholder="Mother's Full Name"
-                        value={formData.motherName}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
-                      />
-                    </div>
-
-                    {/* Native Place */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Native Place / Hometown
-                      </label>
-                      <input
-                        type="text"
-                        name="nativePlace"
-                        placeholder="e.g. Hubballi, Karnataka"
-                        value={formData.nativePlace}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
-                      />
-                    </div>
-
-                    {/* Gothra */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Gothra *
-                      </label>
-                      <input
-                        type="text"
-                        name="gothra"
-                        placeholder="e.g. Kasyapa, Vatsa, Bharadwaja"
-                        value={formData.gothra}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.gothra ? 'border-red-500' : 'border-cream-300'} text-sm focus:outline-none focus:border-gold-500`}
-                      />
-                      {errors.gothra && <p className="text-[11px] text-red-600 mt-1">{errors.gothra}</p>}
-                    </div>
-
-                  </div>
-
-                  {/* Family Details Textarea */}
-                  <div>
-                    <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                      Family Background Summary
-                    </label>
-                    <textarea
-                      name="familyDetails"
-                      rows={3}
-                      placeholder="Brief details about siblings, family values, and traditions..."
-                      value={formData.familyDetails}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
-                    ></textarea>
-                  </div>
-                </div>
-              )}
-
-              {/* STEP 3: Preferences & Horoscope */}
-              {currentStep === 3 && (
-                <div className="space-y-6 animate-fadeIn">
-                  <div className="flex items-center gap-2 border-b border-cream-200 pb-3">
-                    <Sun className="w-5 h-5 text-maroon-800" />
-                    <h3 className="font-serif text-lg font-bold text-maroon-900">Step 3: Matrimonial Preferences & Horoscope</h3>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    
-                    {/* Preferred Age Range */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Preferred Partner Age Range
-                      </label>
-                      <input
-                        type="text"
-                        name="preferredAge"
-                        placeholder="e.g. 24 - 28 years"
-                        value={formData.preferredAge}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
-                      />
-                    </div>
-
-                    {/* Preferred Location */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Preferred Partner Location
-                      </label>
-                      <input
-                        type="text"
-                        name="preferredLocation"
-                        placeholder="e.g. Bengaluru / Karnataka"
-                        value={formData.preferredLocation}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
-                      />
-                    </div>
-
-                    {/* Education Preference */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Education Preference
-                      </label>
-                      <input
-                        type="text"
-                        name="educationPreference"
-                        placeholder="e.g. Engineering / Medical / Post Graduate"
-                        value={formData.educationPreference}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
-                      />
-                    </div>
-
-                    {/* Profession Preference */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Profession Preference
-                      </label>
-                      <input
-                        type="text"
-                        name="professionPreference"
-                        placeholder="e.g. Working Professional / Business"
-                        value={formData.professionPreference}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
-                      />
-                    </div>
-
-                    {/* Rashi */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Rashi (Moon Sign)
-                      </label>
-                      <input
-                        type="text"
-                        name="rashi"
-                        placeholder="e.g. Vrishabha, Mesha, Simha"
-                        value={formData.rashi}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
-                      />
-                    </div>
-
-                    {/* Nakshatra */}
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Nakshatra (Birth Star)
-                      </label>
-                      <input
-                        type="text"
-                        name="nakshatra"
-                        placeholder="e.g. Rohini, Ashwini"
-                        value={formData.nakshatra}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
-                      />
-                    </div>
-
-                    {/* Manglik Status */}
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
-                        Manglik Status
+                        Have you been married before? *
                       </label>
                       <select
-                        name="manglikStatus"
-                        value={formData.manglikStatus}
+                        name="marriedBefore"
+                        value={formData.marriedBefore}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500 bg-white"
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.marriedBefore ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500 bg-white`}
                       >
-                        <option value="Non-Manglik">Non-Manglik</option>
-                        <option value="Manglik">Manglik</option>
-                        <option value="Partial Manglik">Partial / Anshik Manglik</option>
-                        <option value="Don't Know">Don't Know / To Be Calculated</option>
+                        <option value="">Please Select</option>
+                        <option value="No">No (Never Married)</option>
+                        <option value="Yes - Divorced">Yes - Divorced</option>
+                        <option value="Yes - Widowed">Yes - Widowed</option>
+                        <option value="Yes - Awaiting Divorce">Yes - Awaiting Divorce</option>
                       </select>
+                      {errors.marriedBefore && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.marriedBefore}</p>
+                      )}
                     </div>
 
+                    {/* Refrence Name */}
+                    <div>
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Refrence Name
+                      </label>
+                      <input
+                        type="text"
+                        name="referenceName"
+                        placeholder="Family / Community reference name"
+                        value={formData.referenceName}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
+                      />
+                    </div>
+
+                    {/* Refrence Mobile No */}
+                    <div>
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Refrence Mobile No
+                      </label>
+                      <input
+                        type="tel"
+                        name="referenceMobile"
+                        placeholder="Reference mobile number"
+                        value={formData.referenceMobile}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500"
+                      />
+                    </div>
+
+                    {/* Physical Disability (if any)* */}
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Physical Disability (if any)*
+                      </label>
+                      <select
+                        name="disability"
+                        value={formData.disability}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.disability ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500 bg-white`}
+                      >
+                        <option value="">Please Select</option>
+                        <option value="No">No</option>
+                        <option value="Yes">Yes</option>
+                      </select>
+                      {errors.disability && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.disability}</p>
+                      )}
+                    </div>
+
+                    {/* Permanent Address (Candidate)* */}
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Permanent Address (Candidate)*
+                      </label>
+                      <textarea
+                        name="permanentAddress"
+                        rows={3}
+                        placeholder="Door number, street, landmark, area, pin code..."
+                        value={formData.permanentAddress}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 rounded-xl border ${
+                          errors.permanentAddress ? 'border-red-500' : 'border-cream-300'
+                        } text-sm focus:outline-none focus:border-gold-500 resize-none`}
+                      ></textarea>
+                      {errors.permanentAddress && (
+                        <p className="text-[11px] text-red-600 mt-1">{errors.permanentAddress}</p>
+                      )}
+                    </div>
+
+                    {/* Important Note */}
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-charcoal-800 mb-1">
+                        Important Note
+                      </label>
+                      <textarea
+                        name="importantNote"
+                        rows={2}
+                        placeholder="Any additional family or partner preference note..."
+                        value={formData.importantNote}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:border-gold-500 resize-none"
+                      ></textarea>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* STEP 4: Uploads & Review */}
+              {/* STEP 4: Photo & Verification */}
               {currentStep === 4 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div className="flex items-center gap-2 border-b border-cream-200 pb-3">
-                    <FileText className="w-5 h-5 text-maroon-800" />
-                    <h3 className="font-serif text-lg font-bold text-maroon-900">Step 4: Upload Profile Photo & Bio-Data Document</h3>
+                    <Camera className="w-5 h-5 text-maroon-800" />
+                    <h3 className="font-serif text-lg font-bold text-maroon-900">
+                      Step 4: Photo & Bio-Data Upload
+                    </h3>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    
-                    {/* Photo Upload Card */}
-                    <div className="p-6 rounded-2xl bg-cream-100 border-2 border-dashed border-gold-400/50 text-center flex flex-col items-center justify-center space-y-3">
-                      {formData.photoPreview ? (
-                        <div className="relative w-28 h-28 rounded-2xl overflow-hidden border-2 border-gold-400 shadow-md">
-                          <img src={formData.photoPreview} alt="Preview" className="w-full h-full object-cover" />
-                          <button
-                            type="button"
-                            onClick={() => setFormData((prev) => ({ ...prev, photoFile: null, photoPreview: null }))}
-                            className="absolute top-1 right-1 bg-maroon-900 text-white rounded-full p-1 text-[10px]"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="w-16 h-16 rounded-full bg-gold-400/20 text-maroon-900 flex items-center justify-center">
-                          <Camera className="w-8 h-8 text-maroon-800" />
-                        </div>
-                      )}
-
-                      <div>
-                        <p className="text-xs font-bold text-maroon-900">Upload Profile Photo</p>
-                        <p className="text-[11px] text-charcoal-600 mt-0.5">JPEG/PNG format (Max 5MB)</p>
+                    {/* Photo * */}
+                    <div
+                      className={`p-6 rounded-2xl border-2 border-dashed ${
+                        errors.photoFile ? 'border-red-500 bg-red-50/20' : 'border-gold-400/40 bg-cream-50'
+                      } text-center space-y-4`}
+                    >
+                      <div className="w-24 h-24 rounded-full mx-auto overflow-hidden bg-cream-200 border-2 border-gold-400/60 flex items-center justify-center shadow-inner">
+                        {formData.photoPreview ? (
+                          <img
+                            src={formData.photoPreview}
+                            alt="Candidate Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <User className="w-12 h-12 text-maroon-900/40" />
+                        )}
                       </div>
 
-                      <label className="px-4 py-2 rounded-full bg-maroon-900 text-gold-300 text-xs font-bold hover:bg-maroon-800 cursor-pointer shadow-sm">
-                        <span>{formData.photoPreview ? 'Change Photo' : 'Browse Photo'}</span>
-                        <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                      <div>
+                        <p className="text-xs font-bold text-maroon-900">Photo *</p>
+                        <p className="text-[11px] text-charcoal-600 mt-0.5">
+                          Clear recent passport or portrait photo
+                        </p>
+                      </div>
+
+                      <label className="inline-block px-4 py-2 rounded-full bg-maroon-900 text-gold-300 text-xs font-bold hover:bg-maroon-800 cursor-pointer shadow-sm">
+                        <span>{formData.photoFile ? 'Change Photo' : 'Choose File'}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handlePhotoUpload}
+                          className="hidden"
+                        />
                       </label>
+                      {errors.photoFile && (
+                        <p className="text-[11px] text-red-600 font-semibold">{errors.photoFile}</p>
+                      )}
                     </div>
 
-                    {/* Bio-Data Document Upload Card */}
-                    <div className="p-6 rounded-2xl bg-cream-100 border-2 border-dashed border-gold-400/50 text-center flex flex-col items-center justify-center space-y-3">
+                    {/* Bio-Data Document File */}
+                    <div className="p-6 rounded-2xl border-2 border-dashed border-cream-300 bg-cream-50 text-center space-y-4 flex flex-col justify-center items-center">
                       <div className="w-16 h-16 rounded-full bg-maroon-900/10 text-maroon-900 flex items-center justify-center">
                         <Upload className="w-8 h-8 text-maroon-800" />
                       </div>
 
                       <div>
-                        <p className="text-xs font-bold text-maroon-900">Upload Full Bio-Data File</p>
+                        <p className="text-xs font-bold text-maroon-900">Upload Bio-Data File (Optional)</p>
                         <p className="text-[11px] text-charcoal-600 mt-0.5">PDF or DOCX document format</p>
                         {formData.bioDataName && (
                           <p className="text-xs font-bold text-emerald-700 mt-1">✓ File: {formData.bioDataName}</p>
@@ -760,18 +1193,22 @@ export default function Registration() {
                       </div>
 
                       <label className="px-4 py-2 rounded-full bg-maroon-900 text-gold-300 text-xs font-bold hover:bg-maroon-800 cursor-pointer shadow-sm">
-                        <span>{formData.bioDataName ? 'Change File' : 'Browse Bio-Data File'}</span>
-                        <input type="file" accept=".pdf,.doc,.docx" onChange={handleBioDataUpload} className="hidden" />
+                        <span>{formData.bioDataName ? 'Change File' : 'Browse Bio-Data'}</span>
+                        <input
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          onChange={handleBioDataUpload}
+                          className="hidden"
+                        />
                       </label>
                     </div>
-
                   </div>
 
                   {/* Privacy Checkbox */}
                   <div className="p-4 rounded-xl bg-gold-400/10 border border-gold-500/30 flex items-start gap-3">
                     <ShieldCheck className="w-5 h-5 text-gold-600 shrink-0 mt-0.5" />
                     <p className="text-xs text-charcoal-700 leading-relaxed">
-                      By submitting your bio-data, you confirm that the details provided belong to an authentic candidate and agree to Pandith Prajapati Milan's family privacy verification guidelines.
+                      By submitting your registration, you confirm that all details provided (Full Name, Community, Gotra, Contact, and Family information) belong to an authentic candidate and agree to Pandith Prajapati Milan's verified family network guidelines.
                     </p>
                   </div>
                 </div>
@@ -804,18 +1241,17 @@ export default function Registration() {
                 ) : (
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-2 px-10 py-3.5 rounded-full bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500 text-maroon-950 text-sm font-bold shadow-lg hover:scale-105 cursor-pointer"
+                    disabled={submitting}
+                    className="inline-flex items-center gap-2 px-10 py-3.5 rounded-full bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500 text-maroon-950 text-sm font-bold shadow-lg hover:scale-105 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
                   >
-                    <span>Submit Bio-Data Now</span>
+                    <span>{submitting ? 'Submitting Registration...' : 'Submit'}</span>
                     <CheckCircle2 className="w-5 h-5" />
                   </button>
                 )}
               </div>
-
             </form>
           </div>
         )}
-
       </main>
 
       <Footer />
