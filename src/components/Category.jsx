@@ -20,16 +20,8 @@ export default function Category() {
   const navigate = useNavigate();
   const { openModal } = useModal();
 
-  // State for Looking For selection
-  const [lookingFor, setLookingFor] = useState('Groom');
-
-  // State for Refine Your Search filters
-  const [filters, setFilters] = useState({
-    age: '',
-    profession: '',
-    location: '',
-    education: ''
-  });
+  // State for Looking For selection (no default selection)
+  const [lookingFor, setLookingFor] = useState(null);
 
   const lookingForOptions = [
     { id: 'Groom', label: 'Groom', image: groomImg },
@@ -38,21 +30,15 @@ export default function Category() {
     { id: 'Divorcee', label: 'Divorcee', image: divorceImg }
   ];
 
-  const handleFilterChange = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
   const handleSearch = (e) => {
     e.preventDefault();
     openModal({
-      title: `${lookingFor} Profiles Search`,
-      tag: "Matching Profiles",
+      title: lookingFor ? `${lookingFor} Profiles Directory` : "Community Profiles Directory",
+      tag: "Community Matches",
       iconType: "sparkles",
-      content: `Searching authentic ${lookingFor} candidates in the Prajapati / Pandit community with your selected preferences${
-        filters.location ? ` in ${filters.location}` : ''
-      }${filters.profession ? `, Profession: ${filters.profession}` : ''}${
-        filters.education ? `, Education: ${filters.education}` : ''
-      }${filters.age ? `, Age: ${filters.age}` : ''}. You can view the full candidate directory or register your profile now.`,
+      content: lookingFor
+        ? `Browse verified ${lookingFor} profiles across the Prajapati / Pandit community. You can explore available profiles or register your bio-data to connect directly with families.`
+        : `Browse verified profiles across the Prajapati / Pandit community. You can explore available profiles or register your bio-data to connect directly with families.`,
       buttonText: "Register / View Matches",
       actionPath: "/registration",
       onAction: () => {
@@ -62,7 +48,7 @@ export default function Category() {
   };
 
   return (
-    <section id="category" className="py-12 sm:py-16 bg-[#FFFDF9] text-[#2D2626] relative overflow-hidden">
+    <section id="category" className="pt-10 sm:pt-14 pb-6 sm:pb-7 bg-[#FFFDF9] text-[#2D2626] relative overflow-hidden border-b border-[#EFE5DC]">
       
       {/* Subtle Background Ambiance */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#F5E6B1]/20 rounded-full blur-3xl pointer-events-none"></div>
@@ -94,9 +80,11 @@ export default function Category() {
 
         {/* Section Header */}
         <div className="mb-8 sm:mb-10 text-left">
-          <div className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold tracking-wider uppercase text-[#9F1239] mb-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#9F1239]"></span>
+          {/* Tag Pill: ❖ CATEGORY ❖ */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFF1EB] border border-[#F5D8CA] text-[#9F1239] text-[11px] font-bold tracking-[0.2em] uppercase shadow-2xs mb-2">
+            <span className="text-[#C5A059] text-xs">❖</span>
             <span>CATEGORY</span>
+            <span className="text-[#C5A059] text-xs">❖</span>
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-[32px] font-serif font-bold text-[#2A1D1D]">
             Find Your Perfect Match
@@ -112,10 +100,10 @@ export default function Category() {
           {/* =========================================================
               PART 1: "Looking For" (Groom, Bride, Widow, Divorcee)
              ========================================================= */}
-          <div className="bg-[#FFFDFB] rounded-2xl sm:rounded-3xl border border-[#F0E4DC] p-5 sm:p-6 shadow-[0_4px_24px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+          <div className="bg-[#FFFDFB] rounded-2xl sm:rounded-3xl border border-[#F0E4DC] p-4 sm:p-5 shadow-[0_4px_24px_rgba(0,0,0,0.03)] flex flex-col justify-between">
             <div>
               {/* Header with Title and Gold Lotus Filament */}
-              <div className="flex items-center gap-3 mb-5 border-b border-[#F4E9E2] pb-3">
+              <div className="flex items-center gap-3 mb-4 border-b border-[#F4E9E2] pb-2.5">
                 <div className="flex items-center gap-2 shrink-0">
                   <div className="w-7 h-7 rounded-full bg-[#FFF0F3] text-[#8B1D2C] flex items-center justify-center">
                     {/* Couple Heart Icon */}
@@ -143,21 +131,21 @@ export default function Category() {
               </div>
 
               {/* 4 Category Cards in a Row */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                 {lookingForOptions.map((opt) => {
                   const isSelected = lookingFor === opt.id;
                   return (
                     <div
                       key={opt.id}
-                      onClick={() => setLookingFor(opt.id)}
-                      className={`group cursor-pointer rounded-2xl border transition-all duration-300 overflow-hidden flex flex-col ${
+                      onClick={() => setLookingFor(prev => prev === opt.id ? null : opt.id)}
+                      className={`group cursor-pointer rounded-xl border transition-all duration-300 overflow-hidden flex flex-col ${
                         isSelected
                           ? 'border-[#8B1D2C] ring-2 ring-[#8B1D2C]/20 shadow-md bg-white'
                           : 'border-[#EAE0D8] bg-white hover:border-[#D4AF37] hover:shadow-sm'
                       }`}
                     >
-                      {/* Image Thumbnail */}
-                      <div className="relative aspect-[4/4.8] sm:aspect-[4/5.2] w-full overflow-hidden bg-neutral-100">
+                      {/* Image Thumbnail - Reduced Height */}
+                      <div className="relative aspect-[4/3.8] w-full overflow-hidden bg-neutral-100">
                         <img
                           src={opt.image}
                           alt={opt.label}
@@ -167,21 +155,12 @@ export default function Category() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
                       </div>
 
-                      {/* Select Radio Bar */}
-                      <div className="p-2 sm:p-2.5 flex items-center justify-center gap-2 bg-white">
-                        <div
-                          className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                            isSelected
-                              ? 'border-[#8B1D2C] bg-white'
-                              : 'border-[#C4B5AE] bg-white group-hover:border-[#8B1D2C]'
-                          }`}
-                        >
-                          {isSelected && (
-                            <div className="w-2 h-2 rounded-full bg-[#8B1D2C]"></div>
-                          )}
-                        </div>
+                      {/* Text Label (No radio button) */}
+                      <div className={`py-2 px-1 text-center transition-colors ${
+                        isSelected ? 'bg-[#FFF5F7]' : 'bg-white group-hover:bg-[#FFFDFB]'
+                      }`}>
                         <span
-                          className={`text-xs sm:text-sm font-semibold transition-colors ${
+                          className={`text-xs sm:text-sm font-bold tracking-wide transition-colors ${
                             isSelected ? 'text-[#8B1D2C]' : 'text-[#3D3535] group-hover:text-[#8B1D2C]'
                           }`}
                         >
@@ -196,18 +175,18 @@ export default function Category() {
           </div>
 
           {/* =========================================================
-              PART 2: "Refine Your Search" (Age, Professional, Location, Education)
+              PART 2: "Search by Preferences" (Clean texts, no text field)
              ========================================================= */}
-          <div className="bg-[#FFFDFB] rounded-2xl sm:rounded-3xl border border-[#F0E4DC] p-5 sm:p-6 shadow-[0_4px_24px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+          <div className="bg-[#FFFDFB] rounded-2xl sm:rounded-3xl border border-[#F0E4DC] p-4 sm:p-5 shadow-[0_4px_24px_rgba(0,0,0,0.03)] flex flex-col justify-between">
             <div>
               {/* Header with Title and Gold Lotus Filament */}
-              <div className="flex items-center gap-3 mb-5 border-b border-[#F4E9E2] pb-3">
+              <div className="flex items-center gap-3 mb-4 border-b border-[#F4E9E2] pb-2.5">
                 <div className="flex items-center gap-2 shrink-0">
                   <div className="w-7 h-7 rounded-full bg-[#FFF0F3] text-[#8B1D2C] flex items-center justify-center">
                     <SlidersHorizontal className="w-4 h-4 text-[#8B1D2C]" />
                   </div>
                   <h3 className="font-serif text-lg sm:text-xl font-bold text-[#8B1D2C]">
-                    Refine Your Search
+                    Search by Preferences
                   </h3>
                 </div>
 
@@ -225,113 +204,51 @@ export default function Category() {
                 </div>
               </div>
 
-              {/* 2x2 Grid of Dropdowns */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-4.5 pt-1">
+              {/* 2x2 Grid of Text Preferences */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 
                 {/* 1. Age */}
-                <div>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[#8B1D2C] mb-1.5">
+                <div className="bg-white/90 rounded-xl p-2.5 sm:p-3 border border-[#EFE5DE] hover:border-[#D4AF37]/70 transition-all flex flex-col justify-start">
+                  <div className="flex items-center gap-1.5 text-xs sm:text-[12.5px] font-bold text-[#8B1D2C] mb-1">
                     <Cake className="w-3.5 h-3.5 text-[#8B1D2C]" />
                     <span>Age</span>
                   </div>
-                  <div className="relative">
-                    <select
-                      value={filters.age}
-                      onChange={(e) => handleFilterChange('age', e.target.value)}
-                      className="w-full h-11 pl-3.5 pr-8 text-xs sm:text-sm bg-white border border-[#E5D7D0] hover:border-[#8B1D2C] rounded-xl focus:outline-none focus:border-[#8B1D2C] text-gray-700 appearance-none cursor-pointer shadow-2xs transition-colors"
-                    >
-                      <option value="">Select Age Range</option>
-                      <option value="18 - 23 Yrs">18 - 23 Yrs</option>
-                      <option value="24 - 28 Yrs">24 - 28 Yrs</option>
-                      <option value="29 - 33 Yrs">29 - 33 Yrs</option>
-                      <option value="34 - 38 Yrs">34 - 38 Yrs</option>
-                      <option value="39 - 45 Yrs">39 - 45 Yrs</option>
-                      <option value="45+ Yrs">45+ Yrs</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
+                  <p className="text-[11px] sm:text-[11.5px] text-[#6B5C5C] leading-snug">
+                    Search compatible life partners matching your preferred life stage and astrological compatibility.
+                  </p>
                 </div>
 
                 {/* 2. Professional */}
-                <div>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[#8B1D2C] mb-1.5">
+                <div className="bg-white/90 rounded-xl p-2.5 sm:p-3 border border-[#EFE5DE] hover:border-[#D4AF37]/70 transition-all flex flex-col justify-start">
+                  <div className="flex items-center gap-1.5 text-xs sm:text-[12.5px] font-bold text-[#8B1D2C] mb-1">
                     <Briefcase className="w-3.5 h-3.5 text-[#8B1D2C]" />
                     <span>Professional</span>
                   </div>
-                  <div className="relative">
-                    <select
-                      value={filters.profession}
-                      onChange={(e) => handleFilterChange('profession', e.target.value)}
-                      className="w-full h-11 pl-3.5 pr-8 text-xs sm:text-sm bg-white border border-[#E5D7D0] hover:border-[#8B1D2C] rounded-xl focus:outline-none focus:border-[#8B1D2C] text-gray-700 appearance-none cursor-pointer shadow-2xs transition-colors"
-                    >
-                      <option value="">Select Profession</option>
-                      <option value="Software / IT Engineer">Software / IT Engineer</option>
-                      <option value="Doctor / Healthcare">Doctor / Healthcare</option>
-                      <option value="Civil Services / Govt">Civil Services / Govt</option>
-                      <option value="Chartered Accountant / Finance">Chartered Accountant / Finance</option>
-                      <option value="Business / Entrepreneur">Business / Entrepreneur</option>
-                      <option value="Professor / Teacher">Professor / Teacher</option>
-                      <option value="Lawyer / Legal">Lawyer / Legal</option>
-                      <option value="Other Profession">Other Profession</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
+                  <p className="text-[11px] sm:text-[11.5px] text-[#6B5C5C] leading-snug">
+                    Connect with qualified software engineers, healthcare professionals, civil servants, and entrepreneurs.
+                  </p>
                 </div>
 
                 {/* 3. Location */}
-                <div>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[#8B1D2C] mb-1.5">
+                <div className="bg-white/90 rounded-xl p-2.5 sm:p-3 border border-[#EFE5DE] hover:border-[#D4AF37]/70 transition-all flex flex-col justify-start">
+                  <div className="flex items-center gap-1.5 text-xs sm:text-[12.5px] font-bold text-[#8B1D2C] mb-1">
                     <MapPin className="w-3.5 h-3.5 text-[#8B1D2C]" />
                     <span>Location</span>
                   </div>
-                  <div className="relative">
-                    <select
-                      value={filters.location}
-                      onChange={(e) => handleFilterChange('location', e.target.value)}
-                      className="w-full h-11 pl-3.5 pr-8 text-xs sm:text-sm bg-white border border-[#E5D7D0] hover:border-[#8B1D2C] rounded-xl focus:outline-none focus:border-[#8B1D2C] text-gray-700 appearance-none cursor-pointer shadow-2xs transition-colors"
-                    >
-                      <option value="">Select Location</option>
-                      <option value="Bengaluru">Bengaluru</option>
-                      <option value="Mysuru">Mysuru</option>
-                      <option value="Hubballi-Dharwad">Hubballi-Dharwad</option>
-                      <option value="Belagavi">Belagavi</option>
-                      <option value="Mangaluru">Mangaluru</option>
-                      <option value="Delhi NCR">Delhi NCR</option>
-                      <option value="Mumbai / Pune">Mumbai / Pune</option>
-                      <option value="Hyderabad">Hyderabad</option>
-                      <option value="Any Location">Any Location</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
+                  <p className="text-[11px] sm:text-[11.5px] text-[#6B5C5C] leading-snug">
+                    Discover verified community matches across Bengaluru, native towns in Karnataka, and pan-India.
+                  </p>
                 </div>
 
                 {/* 4. Education */}
-                <div>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[#8B1D2C] mb-1.5">
+                <div className="bg-white/90 rounded-xl p-2.5 sm:p-3 border border-[#EFE5DE] hover:border-[#D4AF37]/70 transition-all flex flex-col justify-start">
+                  <div className="flex items-center gap-1.5 text-xs sm:text-[12.5px] font-bold text-[#8B1D2C] mb-1">
                     <GraduationCap className="w-3.5 h-3.5 text-[#8B1D2C]" />
                     <span>Education</span>
                   </div>
-                  <div className="relative">
-                    <select
-                      value={filters.education}
-                      onChange={(e) => handleFilterChange('education', e.target.value)}
-                      className="w-full h-11 pl-3.5 pr-8 text-xs sm:text-sm bg-white border border-[#E5D7D0] hover:border-[#8B1D2C] rounded-xl focus:outline-none focus:border-[#8B1D2C] text-gray-700 appearance-none cursor-pointer shadow-2xs transition-colors"
-                    >
-                      <option value="">Select Education</option>
-                      <option value="Schooling (up to 10th )">Schooling (up to 10th )</option>
-                      <option value="PUC/12th Std">PUC / 12th Std</option>
-                      <option value="Diploma">Diploma</option>
-                      <option value="BE / B.Tech">BE / B.Tech</option>
-                      <option value="BSc / BCA / BBA / BCom">BSc / BCA / BBA / BCom</option>
-                      <option value="MBBS / BDS / MD">MBBS / BDS / MD</option>
-                      <option value="ME / M.Tech / MS">ME / M.Tech / MS</option>
-                      <option value="MBA / MCA / MCom">MBA / MCA / MCom</option>
-                      <option value="CA / CS">CA / CS</option>
-                      <option value="Ph.D / Doctorate">Ph.D / Doctorate</option>
-                      <option value="Other">Other</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
+                  <p className="text-[11px] sm:text-[11.5px] text-[#6B5C5C] leading-snug">
+                    Explore candidates with compatible higher academic credentials from graduation to master's degrees.
+                  </p>
                 </div>
 
               </div>
@@ -341,7 +258,7 @@ export default function Category() {
         </div>
 
         {/* Bottom Center Search Profiles Button */}
-        <div className="mt-8 sm:mt-10 flex justify-center">
+        <div className="mt-6 sm:mt-7 flex justify-center">
           <button
             onClick={handleSearch}
             className="inline-flex items-center gap-2.5 px-9 sm:px-11 py-3 bg-[#8B1538] hover:bg-[#730D2B] text-white font-serif font-semibold text-sm sm:text-base rounded-full shadow-lg shadow-[#8B1538]/25 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"

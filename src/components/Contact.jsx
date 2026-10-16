@@ -145,23 +145,23 @@ export default function Contact() {
     {
       id: 'office',
       title: 'OUR OFFICE',
-      lines: ['Bengaluru, Karnataka', 'India'],
+      lines: ['Hosa Road, Bengaluru', '560068'],
       icon: MapPin,
-      action: 'https://maps.google.com/?q=Bengaluru,Karnataka,India'
+      action: 'https://maps.google.com/?q=Hosa+Road,Bengaluru,560068'
     },
     {
       id: 'call',
       title: 'CALL US',
-      lines: ['+91 98765 43210', '+91 98765 43211'],
+      lines: ['+91 81059 80175'],
       icon: Phone,
-      action: 'tel:+919876543210'
+      action: 'tel:+918105980175'
     },
     {
       id: 'email',
       title: 'EMAIL US',
-      lines: ['support@ppmilan.in', 'info@ppmilan.in'],
+      lines: ['info@ppmilan.in'],
       icon: Mail,
-      action: 'mailto:support@ppmilan.in'
+      action: 'mailto:info@ppmilan.in'
     }
   ];
 

@@ -11,7 +11,7 @@ import {
   ChevronRight, 
   ArrowRight 
 } from 'lucide-react';
-import appFloralDecor from '../assets/app_floral_decor.png';
+
 
 export default function FAQ() {
   const navigate = useNavigate();
@@ -88,38 +88,18 @@ export default function FAQ() {
   const ActiveIcon = activeFAQ.icon;
 
   return (
-    <section id="faq" className="pt-4 sm:pt-6 pb-1 sm:pb-2 bg-[#FAF7F2] text-[#2D2626] relative overflow-hidden select-none">
+    <section id="faq" className="pt-4 sm:pt-6 pb-2 sm:pb-3 bg-[#FFFDF9] text-[#2D2626] relative overflow-x-clip select-none">
       
-      {/* Top-Left Corner Floral Bouquet */}
-      <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 pointer-events-none select-none z-10">
-        <img 
-          src={appFloralDecor} 
-          alt="Floral Decor" 
-          className="w-52 sm:w-64 lg:w-[290px] object-contain drop-shadow-md"
-        />
-      </div>
-
-      {/* Floating Rose Petals Layer cascading down from top-left */}
+      {/* Floating Rose Petals Layer cascading down from top-right floral bouquet */}
       <div className="absolute inset-0 pointer-events-none select-none z-10 overflow-hidden">
-        {/* Petal 1: Flowing down near top-left flowers */}
+        {/* Top-Right Accent Petal: Drifting along the right margin */}
         <motion.div 
-          animate={{ y: [0, 24, 0], x: [0, 6, 0], rotate: [0, 22, 0] }}
-          transition={{ repeat: Infinity, duration: 4.2, ease: "easeInOut" }}
-          className="absolute left-[7%] top-[20%] w-7 h-5"
-        >
-          <svg viewBox="0 0 30 20" fill="none" className="w-full h-full drop-shadow-xs">
-            <path d="M5 10 C5 2, 22 2, 28 8 C30 16, 12 18, 5 10 Z" fill="#F43F5E" opacity="0.9" />
-          </svg>
-        </motion.div>
-
-        {/* Petal 2: Drifting down from flowers toward center */}
-        <motion.div 
-          animate={{ y: [0, 26, 0], x: [0, 9, 0], rotate: [-10, 25, -10] }}
+          animate={{ y: [0, 20, 0], x: [0, -4, 0], rotate: [8, -14, 8] }}
           transition={{ repeat: Infinity, duration: 4.8, ease: "easeInOut", delay: 0.5 }}
-          className="absolute left-[15%] top-[28%] w-7 h-5"
+          className="absolute right-[4%] top-[14%] w-6 h-4.5"
         >
           <svg viewBox="0 0 30 20" fill="none" className="w-full h-full drop-shadow-xs">
-            <path d="M4 12 C2 4, 18 2, 27 6 C29 14, 15 19, 4 12 Z" fill="#E11D48" opacity="0.88" />
+            <path d="M5 10 C5 2, 22 2, 28 8 C30 16, 12 18, 5 10 Z" fill="#F43F5E" opacity="0.85" />
           </svg>
         </motion.div>
 
@@ -209,10 +189,11 @@ export default function FAQ() {
              ========================================= */}
           <div className="lg:col-span-4 flex flex-col items-start text-left relative z-20">
             
-            {/* Tag Pill: • FAQ */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/95 border border-[#E5D7D7] text-[11px] font-bold tracking-wider text-[#9F1239] shadow-2xs mb-3">
-              <span className="w-1.5 h-1.5 -left-4 rounded-full bg-[#9F1239]"></span>
+            {/* Tag Pill: ❖ FAQ ❖ */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFF1EB] border border-[#F5D8CA] text-[#9F1239] text-[11px] font-bold tracking-[0.2em] uppercase shadow-2xs mb-3">
+              <span className="text-[#C5A059] text-xs">❖</span>
               <span>FAQ</span>
+              <span className="text-[#C5A059] text-xs">❖</span>
             </div>
 
             {/* Heart Badge with Question Mark */}
@@ -421,7 +402,13 @@ export default function FAQ() {
 
                         {/* Learn More Button */}
                         <button 
-                          onClick={() => navigate('/contact')}
+                          onClick={() => {
+                            if (activeFAQ.id === 'secure-info') {
+                              navigate('/privacypolicy');
+                            } else {
+                              navigate('/contact');
+                            }
+                          }}
                           className="bg-[#9F1239] hover:bg-[#881337] text-white text-[11px] lg:text-xs font-medium px-5 py-1.5 rounded-full shadow-md shadow-[#9F1239]/20 hover:shadow-lg transition-all hover:scale-105 inline-flex items-center gap-1.5 cursor-pointer"
                         >
                           <span>{activeFAQ.buttonText || 'Learn More'}</span>
@@ -525,7 +512,13 @@ export default function FAQ() {
                     </p>
 
                     <button 
-                      onClick={() => navigate('/contact')}
+                      onClick={() => {
+                        if (activeFAQ.id === 'secure-info') {
+                          navigate('/privacypolicy');
+                        } else {
+                          navigate('/contact');
+                        }
+                      }}
                       className="bg-[#9F1239] text-white text-[11px] font-medium px-4 py-1.5 rounded-full shadow-md shadow-[#9F1239]/20 inline-flex items-center gap-1 cursor-pointer"
                     >
                       <span>{activeFAQ.buttonText || 'Learn More'}</span>

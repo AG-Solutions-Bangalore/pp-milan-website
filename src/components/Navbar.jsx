@@ -78,30 +78,29 @@ export default function Navbar({ onReplayWelcome }) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-[#FFFDF9]/95 backdrop-blur-md py-3 shadow-md border-b border-[#F0E6D8]'
-          : 'bg-[#FFFDF9]/90 backdrop-blur-sm py-4 border-b border-[#F0E6D8]/60'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+        ? 'bg-[#FFFDF9]/95 backdrop-blur-md py-3 shadow-md border-b border-[#F0E6D8]'
+        : 'bg-[#FFFDF9]/90 backdrop-blur-sm py-4 border-b border-[#F0E6D8]/60'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          
+
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group focus:outline-none">
+          <Link to="/" className="flex items-center gap-3.5 sm:gap-4 group focus:outline-none">
             {/* Logo Emblem */}
-            <img 
-              src={logoImg} 
-              alt="PP Milan Logo" 
-              className="w-10 h-10 sm:w-11 sm:h-11 object-contain group-hover:scale-105 transition-transform duration-300 shrink-0" 
+            <img
+              src={logoImg}
+              alt="PP Milan Logo"
+              className="w-13 h-13 sm:w-16 sm:h-16 md:w-18 md:h-18 object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />
-            
+
             <div className="flex flex-col text-left">
               <span className="font-serif text-xl sm:text-2xl font-black tracking-tight text-[#2A1D1D] leading-none">
                 PP MILAN
               </span>
               <span className="text-[9px] sm:text-[10px] tracking-[0.2em] font-semibold text-[#8B1538] uppercase mt-0.5">
-                Pandith Prajapati Milan
+                 For Pandith Prajapati 
               </span>
             </div>
           </Link>
@@ -114,11 +113,10 @@ export default function Navbar({ onReplayWelcome }) {
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`text-[13.5px] font-semibold transition-all relative py-1 cursor-pointer ${
-                    isActive
-                      ? 'text-[#9F1239]'
-                      : 'text-[#4A3E3E] hover:text-[#9F1239]'
-                  }`}
+                  className={`text-[13.5px] font-semibold transition-all relative py-1 cursor-pointer ${isActive
+                    ? 'text-[#9F1239]'
+                    : 'text-[#4A3E3E] hover:text-[#9F1239]'
+                    }`}
                 >
                   {item.label}
                   {isActive && (
@@ -177,7 +175,7 @@ export default function Navbar({ onReplayWelcome }) {
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </Link>
             )}
-          </div> 
+          </div>
 
           {/* Mobile menu toggle */}
           <div className="flex lg:hidden items-center gap-1.5 sm:gap-2 shrink-0">
@@ -216,9 +214,8 @@ export default function Navbar({ onReplayWelcome }) {
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`text-left text-sm font-semibold py-2 border-b border-[#F5EDE1] ${
-                  activeSection === item.id ? 'text-[#9F1239]' : 'text-[#4A3E3E]'
-                }`}
+                className={`text-left text-sm font-semibold py-2 border-b border-[#F5EDE1] ${activeSection === item.id ? 'text-[#9F1239]' : 'text-[#4A3E3E]'
+                  }`}
               >
                 {item.label}
               </button>

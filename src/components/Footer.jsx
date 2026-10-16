@@ -152,11 +152,11 @@ export default function Footer() {
             <div className="lg:col-span-5 space-y-2 text-left">
               
               {/* Brand Logo with Official PP Milan Emblem */}
-              <Link to="/" className="inline-flex items-center gap-2.5 group focus:outline-none">
+              <Link to="/" className="inline-flex items-center gap-3.5 sm:gap-4 group focus:outline-none">
                 <img 
                   src={logoImg} 
                   alt="PP Milan Logo" 
-                  className="w-10 h-10 sm:w-11 sm:h-11 object-contain group-hover:scale-105 transition-transform duration-300 shrink-0" 
+                  className="w-16 h-16 sm:w-20 sm:h-20 md:w-22 md:h-22 object-contain group-hover:scale-105 transition-transform duration-300 shrink-0" 
                 />
                 
                 <div className="flex flex-col text-left">
@@ -270,21 +270,13 @@ export default function Footer() {
 
             <ul className="space-y-1 text-xs text-[#D1C2BB]">
               <li>
-                <a 
-                  href="#privacy" 
-                  onClick={(e) => { 
-                    e.preventDefault(); 
-                    openModal({
-                      title: "Privacy Policy",
-                      tag: "Security & Trust",
-                      iconType: "shield",
-                      content: "At PP Milan, your privacy is our sacred responsibility. Personal bio-data, phone numbers, and family documents are encrypted with banking-grade security and shared solely upon mutual interest between verified community members."
-                    });
-                  }} 
+                <Link 
+                  to="/privacypolicy"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                   className="hover:text-[#F3E5AB] transition-colors cursor-pointer block leading-normal"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
                 <a 
@@ -312,46 +304,12 @@ export default function Footer() {
                       title: "Help & Support Center",
                       tag: "24/7 Assistance",
                       iconType: "help",
-                      content: "Need help creating a bio-data profile or setting up matchmaking filters? Our community care team is here to assist you anytime via WhatsApp or direct phone helpline at +91 98765 43210."
+                      content: "Need help creating a bio-data profile or setting up matchmaking filters? Our community care team is here to assist you anytime via WhatsApp or direct phone helpline at +91 81059 80175."
                     });
                   }} 
                   className="hover:text-[#F3E5AB] transition-colors cursor-pointer block leading-normal"
                 >
                   Help Center
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#guidelines" 
-                  onClick={(e) => { 
-                    e.preventDefault(); 
-                    openModal({
-                      title: "Community Guidelines",
-                      tag: "Mutual Respect",
-                      iconType: "community",
-                      content: "We uphold the highest cultural dignity for all candidates and families. Misleading profiles, commercial solicitation, or disrespectful conduct will result in immediate and permanent account suspension."
-                    });
-                  }} 
-                  className="hover:text-[#F3E5AB] transition-colors cursor-pointer block leading-normal"
-                >
-                  Community Guidelines
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#sitemap" 
-                  onClick={(e) => { 
-                    e.preventDefault(); 
-                    openModal({
-                      title: "Platform Directory",
-                      tag: "Sitemap",
-                      iconType: "sparkles",
-                      content: "Quickly browse our platform: Home, About Us, Community Categories, Special Features, FAQ, and Contact Us. Reach out to our team anytime for dedicated matrimonial assistance."
-                    });
-                  }} 
-                  className="hover:text-[#F3E5AB] transition-colors cursor-pointer block leading-normal"
-                >
-                  Sitemap
                 </a>
               </li>
             </ul>
@@ -370,34 +328,18 @@ export default function Footer() {
               {/* Address */}
               <div className="flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
-                <span>Bengaluru, Karnataka, India</span>
+                <span>Hosa Road, Bengaluru, 560068</span>
               </div>
 
-              {/* Phone 1 */}
+              {/* Phone */}
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
-                <a href="tel:+919876543210" className="hover:text-[#F3E5AB] transition-colors">
-                  +91 98765 43210
+                <a href="tel:+918105980175" className="hover:text-[#F3E5AB] transition-colors">
+                  +91 81059 80175
                 </a>
               </div>
 
-              {/* Phone 2 */}
-              <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
-                <a href="tel:+919876543211" className="hover:text-[#F3E5AB] transition-colors">
-                  +91 98765 43211
-                </a>
-              </div>
-
-              {/* Email 1 */}
-              <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
-                <a href="mailto:support@ppmilan.in" className="hover:text-[#F3E5AB] transition-colors">
-                  support@ppmilan.in
-                </a>
-              </div>
-
-              {/* Email 2 */}
+              {/* Email */}
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
                 <a href="mailto:info@ppmilan.in" className="hover:text-[#F3E5AB] transition-colors">
