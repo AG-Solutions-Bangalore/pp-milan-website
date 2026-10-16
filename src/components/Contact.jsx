@@ -13,6 +13,7 @@ import {
   X
 } from 'lucide-react';
 import contactBgBanner from '../assets/contact_banner_bg.jpg';
+import { API_BASE } from '../config/api';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -98,7 +99,7 @@ export default function Contact() {
     setLoading(true);
 
     try {
-      const response = await fetch('https://ppmilan.in/api/createEnquiry', {
+      const response = await fetch(`${API_BASE}/createEnquiry`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -25,8 +25,7 @@ import {
   X
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-
-const API_BASE = 'https://ppmilan.in/api';
+import { API_BASE } from '../config/api';
 
 // Fallback data in case of offline/network hiccups
 const FALLBACK_COMMUNITIES = [
