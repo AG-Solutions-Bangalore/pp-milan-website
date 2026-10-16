@@ -35,15 +35,13 @@ export default function AppSection() {
   ];
 
   return (
-    <section id="app" className="relative pt-10 pb-14 bg-[#FFFDF9] text-[#2D2626] overflow-hidden">
+    <section id="app" className="relative pt-10 pb-14 bg-[#FFFDF9] text-[#2D2626] overflow-x-clip z-10">
       
-      
-
-      {/* Decorative Floral Decor in Bottom-Right Corner */}
-      <div className="absolute -bottom-8 sm:-bottom-10 lg:-bottom-12 -right-6 sm:-right-8 lg:-right-10 w-[280px] sm:w-[340px] lg:w-[390px] pointer-events-none opacity-90 rotate-180 z-0">
+      {/* Decorative Floral Decor draping seamlessly across Mobile App and FAQ sections */}
+      <div className="absolute -bottom-16 sm:-bottom-22 lg:-bottom-26 -right-4 sm:-right-6 lg:-right-7 w-[250px] sm:w-[315px] lg:w-[355px] pointer-events-none opacity-95 rotate-180 z-20">
         <img
           src={appFloralDecorImg}
-          alt="Bottom-Right Floral Decor"
+          alt="Transitional Floral Decor"
           className="w-full h-auto object-contain filter drop-shadow-sm"
         />
       </div>
@@ -57,10 +55,11 @@ export default function AppSection() {
           {/* Left Column: Heading, Description & Store Badges (4 cols) */}
           <div className="lg:col-span-4 flex flex-col items-start text-left space-y-3.5">
             
-            {/* Pill: MOBILE APP */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-[#F0D5DA] text-[11px] font-bold tracking-wider uppercase text-[#9F1239] shadow-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#9F1239]"></span>
+            {/* Tag Pill: ❖ MOBILE APP ❖ */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFF1EB] border border-[#F5D8CA] text-[#9F1239] text-[11px] font-bold tracking-[0.2em] uppercase shadow-2xs mb-1">
+              <span className="text-[#C5A059] text-xs">❖</span>
               <span>MOBILE APP</span>
+              <span className="text-[#C5A059] text-xs">❖</span>
             </div>
 
             {/* Headline */}

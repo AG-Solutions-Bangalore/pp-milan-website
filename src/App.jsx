@@ -4,6 +4,7 @@ import { ModalProvider } from './context/ModalContext';
 import Home from './pages/Home';
 import Registration from './pages/Registration';
 import ContactPage from './pages/ContactPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -24,6 +25,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </ModalProvider>

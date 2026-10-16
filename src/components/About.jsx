@@ -19,12 +19,12 @@ export default function About() {
           
           {/* Left Column: Full View Arched Mandap Palace Frame */}
           <div className="lg:col-span-5 flex justify-center">
-            <div className="relative w-full max-w-[420px] rounded-t-[120px] rounded-b-2xl p-2 bg-gradient-to-b from-[#E5C365] via-[#D4AF37]/50 to-[#C5A059] shadow-xl">
-              <div className="relative rounded-t-[115px] rounded-b-xl overflow-hidden border-2 border-white shadow-inner bg-cream-100">
+            <div className="relative w-full max-w-[480px] rounded-t-[200px] rounded-b-3xl p-2.5 bg-gradient-to-b from-[#E5C365] via-[#D4AF37]/60 to-[#C5A059] shadow-2xl">
+              <div className="relative h-[340px] sm:h-[400px] lg:h-[440px] rounded-t-[192px] rounded-b-2xl overflow-hidden border-2 border-white shadow-inner bg-gradient-to-b from-[#FFFDF9] via-white to-[#FAF5EE] flex items-center justify-center">
                 <img
                   src={mandapImg}
                   alt="Royal Wedding Mandap - Pandith Prajapati Milan"
-                  className="w-full h-auto object-contain object-center transform hover:scale-103 transition-transform duration-700"
+                  className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-700"
                 />
               </div>
             </div>
@@ -32,10 +32,11 @@ export default function About() {
 
           {/* Right Column: Text Content + Stat Badges Below Button */}
           <div className="lg:col-span-7 flex flex-col items-start text-left space-y-4">
-            {/* Tag Pill */}
-            <div className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold tracking-wider uppercase text-[#9F1239]">
-              <span className="w-2 h-2 rounded-full bg-[#9F1239]"></span>
+            {/* Tag Pill: ❖ ABOUT US ❖ */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFF1EB] border border-[#F5D8CA] text-[#9F1239] text-[11px] font-bold tracking-[0.2em] uppercase shadow-2xs mb-1">
+              <span className="text-[#C5A059] text-xs">❖</span>
               <span>ABOUT US</span>
+              <span className="text-[#C5A059] text-xs">❖</span>
             </div>
 
             {/* Heading */}
