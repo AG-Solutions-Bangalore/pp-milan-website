@@ -1,8 +1,7 @@
 import React from 'react';
 import { Bell, Users, ShieldCheck, Sliders, Smartphone } from 'lucide-react';
 import { useModal } from '../context/ModalContext';
-import appPhonesImg from '../assets/app_phones.png';
-import appFloralDecorImg from "../assets/app_floral_decor.png";
+import { getImageUrl } from '../config/api';
 
 export default function AppSection() {
   const { openModal } = useModal();
@@ -40,7 +39,7 @@ export default function AppSection() {
       {/* Decorative Floral Decor draping seamlessly across Mobile App and FAQ sections */}
       <div className="absolute -bottom-16 sm:-bottom-22 lg:-bottom-26 -right-4 sm:-right-6 lg:-right-7 w-[250px] sm:w-[315px] lg:w-[355px] pointer-events-none opacity-95 rotate-180 z-20">
         <img
-          src={appFloralDecorImg}
+          src={getImageUrl('app_floral_decor.png')}
           alt="Transitional Floral Decor"
           className="w-full h-auto object-contain filter drop-shadow-sm"
         />
@@ -121,7 +120,7 @@ export default function AppSection() {
           <div className="lg:col-span-4 flex justify-center items-center relative py-2">
             <div className="relative w-full max-w-[370px] sm:max-w-[420px] lg:max-w-[440px] transition-transform duration-500 hover:scale-103">
               <img
-                src={appPhonesImg}
+                src={getImageUrl('app_phones.png')}
                 alt="PP Milan Matrimonial Mobile App"
                 className="w-full h-auto object-contain filter drop-shadow-xl"
               />

@@ -7,7 +7,7 @@ import {
   ArrowUp 
 } from 'lucide-react';
 import { useModal } from '../context/ModalContext';
-import logoImg from '../assets/PPMilan_logo.png';
+import { getImageUrl } from '../config/api';
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -154,7 +154,7 @@ export default function Footer() {
               {/* Brand Logo with Official PP Milan Emblem */}
               <Link to="/" className="inline-flex items-center gap-3.5 sm:gap-4 group focus:outline-none">
                 <img 
-                  src={logoImg} 
+                  src={getImageUrl('PPMilan_logo.png')} 
                   alt="PP Milan Logo" 
                   className="w-16 h-16 sm:w-20 sm:h-20 md:w-22 md:h-22 object-contain group-hover:scale-105 transition-transform duration-300 shrink-0" 
                 />

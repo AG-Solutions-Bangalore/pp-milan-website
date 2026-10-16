@@ -2,8 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Lock, Users, ArrowRight } from 'lucide-react';
-import heroCoupleImg from '../assets/mockup_hero_couple.png';
-import floralGarlandImg from '../assets/floral_garland.jpg';
+import { getImageUrl } from '../config/api';
 
 export default function Hero({ onReplayWelcome }) {
   const scrollToCategory = () => {
@@ -20,7 +19,7 @@ export default function Hero({ onReplayWelcome }) {
       {/* Floral Garland Centered in the Hero Section */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] sm:w-[750px] max-w-[95%] pointer-events-none z-0 opacity-25 flex justify-center">
         <img
-          src={floralGarlandImg}
+          src={getImageUrl('floral_garland.jpg')}
           alt="Festive Floral Garland"
           className="w-full h-auto object-contain"
         />
@@ -166,7 +165,7 @@ export default function Hero({ onReplayWelcome }) {
               <div className="relative rounded-3xl p-1.5 bg-gradient-to-tr from-[#E5C365]/30 via-white to-[#F0C7CF]/40 shadow-xl shadow-[#9F1239]/10">
                 <div className="relative rounded-[22px] overflow-hidden border border-[#D4AF37]/30 shadow-inner group h-[340px] sm:h-[370px] lg:h-[380px]">
                   <img
-                    src={heroCoupleImg}
+                    src={getImageUrl('mockup_hero_couple.png')}
                     alt="Pandith Prajapati Milan Wedding Couple"
                     className="w-full h-full object-cover object-top group-hover:scale-103 transition-transform duration-700"
                   />

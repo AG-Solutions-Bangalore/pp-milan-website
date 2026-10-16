@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Award, ShieldCheck, Users, ArrowRight } from 'lucide-react';
-import mandapImg from '../assets/mockup_mandap.png';
+import { getImageUrl } from '../config/api';
 
 export default function About() {
   return (
@@ -22,7 +22,7 @@ export default function About() {
             <div className="relative w-full max-w-[480px] rounded-t-[200px] rounded-b-3xl p-2.5 bg-gradient-to-b from-[#E5C365] via-[#D4AF37]/60 to-[#C5A059] shadow-2xl">
               <div className="relative h-[340px] sm:h-[400px] lg:h-[440px] rounded-t-[192px] rounded-b-2xl overflow-hidden border-2 border-white shadow-inner bg-gradient-to-b from-[#FFFDF9] via-white to-[#FAF5EE] flex items-center justify-center">
                 <img
-                  src={mandapImg}
+                  src={getImageUrl('mockup_mandap.png')}
                   alt="Royal Wedding Mandap - Pandith Prajapati Milan"
                   className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-700"
                 />
