@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Sun, MapPin, Briefcase, Heart, Filter, Sparkles, ChevronRight, Info, Award } from 'lucide-react';
-import profilePriya from '../assets/cat_bride.png';
-import profileArjun from '../assets/cat_groom.jpg';
-import profileAnanya from '../assets/cat_bride.png';
-import profileRajesh from '../assets/groom_standalone.jpg';
+import { getImageUrl } from '../config/api';
+
+const profilePriya = getImageUrl('cat_bride.png');
+const profileArjun = getImageUrl('cat_groom.png');
+const profileAnanya = getImageUrl('cat_bride.png');
+const profileRajesh = getImageUrl('cat_groom.png');
 
 export default function ProfilePreview() {
   const [locationFilter, setLocationFilter] = useState('All');

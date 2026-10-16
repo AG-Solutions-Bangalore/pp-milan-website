@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Sparkles, Sun, ArrowRight, ShieldCheck } from 'lucide-react';
-import groomImg from '../assets/groom_family_welcome.jpg';
-import brideImg from '../assets/cat_parents.jpg';
+import { getImageUrl } from '../config/api';
+
+const groomImg = getImageUrl('cat_groom.png');
+const brideImg = getImageUrl('cat_bride.png');
 
 export default function WelcomeScreen({ onComplete }) {
   const [stage, setStage] = useState(0); // 0: approaching, 1: joined, 2: fadeout

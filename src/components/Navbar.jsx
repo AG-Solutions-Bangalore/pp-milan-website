@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, Menu, X, ArrowRight, ArrowLeft } from 'lucide-react';
-import logoImg from '../assets/PPMilan_logo.png';
+import { getImageUrl } from '../config/api';
 
 export default function Navbar({ onReplayWelcome }) {
   const [scrolled, setScrolled] = useState(false);
@@ -90,7 +90,7 @@ export default function Navbar({ onReplayWelcome }) {
           <Link to="/" className="flex items-center gap-3.5 sm:gap-4 group focus:outline-none">
             {/* Logo Emblem */}
             <img
-              src={logoImg}
+              src={getImageUrl('PPMilan_logo.png')}
               alt="PP Milan Logo"
               className="w-13 h-13 sm:w-16 sm:h-16 md:w-18 md:h-18 object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />

@@ -12,7 +12,7 @@ import {
   AlertCircle,
   X
 } from 'lucide-react';
-import contactBgBanner from '../assets/contact_banner_bg.jpg';
+import { API_BASE, getImageUrl } from '../config/api';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -98,7 +98,7 @@ export default function Contact() {
     setLoading(true);
 
     try {
-      const response = await fetch('https://ppmilan.in/api/createEnquiry', {
+      const response = await fetch(`${API_BASE}/createEnquiry`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ export default function Contact() {
     <section 
       id="contact-page-section" 
       className="pt-20 sm:pt-24 lg:pt-28 pb-14 sm:pb-16 lg:pb-20 relative overflow-hidden select-none flex-1 flex flex-col justify-center bg-no-repeat bg-cover bg-[position:center_15%]"
-      style={{ backgroundImage: `url(${contactBgBanner})` }}
+      style={{ backgroundImage: `url(${getImageUrl('contact_banner_bg.jpg')})` }}
     >
       {/* ========================================================
           TOASTER NOTIFICATION (Floating Top-Right)

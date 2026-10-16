@@ -11,10 +11,7 @@ import {
 } from 'lucide-react';
 import { useModal } from '../context/ModalContext';
 
-import groomImg from '../assets/cat_groom.png';
-import brideImg from '../assets/cat_bride.png';
-import widowImg from '../assets/Widow.webp';
-import divorceImg from '../assets/Divorce.webp';
+import { getImageUrl } from '../config/api';
 
 export default function Category() {
   const navigate = useNavigate();
@@ -24,10 +21,10 @@ export default function Category() {
   const [lookingFor, setLookingFor] = useState(null);
 
   const lookingForOptions = [
-    { id: 'Groom', label: 'Groom', image: groomImg },
-    { id: 'Bride', label: 'Bride', image: brideImg },
-    { id: 'Widow', label: 'Widow', image: widowImg },
-    { id: 'Divorcee', label: 'Divorcee', image: divorceImg }
+    { id: 'Groom', label: 'Groom', image: getImageUrl('cat_groom.png') },
+    { id: 'Bride', label: 'Bride', image: getImageUrl('cat_bride.png') },
+    { id: 'Widow', label: 'Widow', image: getImageUrl('Widow.webp') },
+    { id: 'Divorcee', label: 'Divorcee', image: getImageUrl('Divorce.webp') }
   ];
 
   const handleSearch = (e) => {

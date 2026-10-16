@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import logoImg from '../assets/PPMilan_logo.png';
 import {
   ShieldCheck,
   Heart,
@@ -25,8 +24,7 @@ import {
   X
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-
-const API_BASE = 'https://ppmilan.in/api';
+import { API_BASE } from '../config/api';
 
 // Fallback data in case of offline/network hiccups
 const FALLBACK_COMMUNITIES = [
